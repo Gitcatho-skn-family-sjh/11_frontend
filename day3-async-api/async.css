@@ -1,0 +1,313 @@
+/* DOM 카드·표·비동기 상태·외부 API 결과 */
+.service-form {
+  display: grid;
+  gap: 14px;
+}
+
+.service-form select,
+.service-form textarea,
+.table-tools select,
+.async-controls select,
+#ai-form textarea {
+  width: min(100%, 34rem);
+  max-width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 7px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+}
+
+.service-form textarea,
+#ai-form textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.service-form select:focus-visible,
+.service-form textarea:focus-visible,
+.table-tools select:focus-visible,
+.async-controls select:focus-visible,
+#ai-form textarea:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--yellow);
+}
+
+.service-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.service-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 16px;
+  border: 2px solid var(--ink);
+  border-top: 8px solid var(--blue);
+  border-radius: 9px;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.service-card h3 {
+  margin: 8px 0;
+}
+
+.service-card p {
+  flex: 1;
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+
+.service-badge,
+#format-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 850;
+}
+
+.service-delete-button {
+  align-self: flex-start;
+  margin-top: 8px;
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.service-delete-button:hover {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.server-overview {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.server-overview > :first-child {
+  grid-column: 1 / -1;
+}
+
+.table-tools,
+.async-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.table-tools > div,
+.async-controls > div {
+  flex: 1 1 210px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.table-tools input,
+.table-tools select,
+.async-controls select {
+  width: 100%;
+}
+
+.table-tools input,
+.table-tools select {
+  height: 46px;
+  padding: 8px 12px;
+}
+
+.service-table {
+  min-width: 660px;
+}
+
+.service-table tbody tr:hover {
+  background: var(--blue-soft);
+}
+
+.service-table button {
+  min-height: 36px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+.detail-panel {
+  margin-top: 18px;
+  padding: 18px;
+  border: 2px solid var(--ink);
+  border-left: 8px solid var(--blue);
+  border-radius: 9px;
+  background: var(--blue-soft);
+}
+
+.detail-panel h3 {
+  margin-top: 0;
+}
+
+.async-controls button:disabled,
+form[aria-busy="true"] button {
+  background: var(--muted);
+  cursor: wait;
+  box-shadow: none;
+}
+
+.async-status {
+  min-height: 3.25rem;
+  margin: 14px 0;
+  padding: 12px 14px;
+  border: 2px solid var(--line);
+  border-left: 8px solid var(--line-soft);
+  border-radius: 8px;
+  background: var(--surface-muted);
+  font-weight: 750;
+}
+
+.async-status[data-state="loading"] {
+  border-left-color: var(--amber);
+  background: var(--amber-soft);
+}
+
+.async-status[data-state="success"],
+.async-status[data-state="empty"] {
+  border-left-color: var(--green);
+  background: var(--green-soft);
+}
+
+.async-status[data-state="error"] {
+  border-left-color: var(--red);
+  background: var(--red-soft);
+}
+
+.async-log {
+  min-height: 5rem;
+}
+
+[data-fetch-step] {
+  border-left-color: var(--line-soft) !important;
+  background: var(--surface-muted) !important;
+}
+
+[data-fetch-step][data-done="true"] {
+  border-left-color: var(--green) !important;
+  background: var(--green-soft) !important;
+}
+
+#search-results[data-state="loading"]::before,
+#search-results[data-state="empty"]::before,
+#search-results[data-state="error"]::before {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  content: "결과 카드는 상태 메시지에서 확인한다.";
+}
+
+.demo-surface details {
+  margin-top: 16px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--surface-muted);
+}
+
+.demo-surface summary {
+  padding: 11px 14px;
+  font-weight: 850;
+}
+
+.demo-surface details pre {
+  border-top: 2px solid var(--ink);
+  border-radius: 0 0 6px 6px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+#weather-card,
+#ai-result {
+  border-left-color: var(--blue);
+  background: var(--blue-soft);
+}
+
+#weather-card > p:first-child,
+#ai-result > p:first-child {
+  margin-top: 0;
+}
+
+#weather-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0 0;
+}
+
+#weather-card dl > div {
+  min-width: 0;
+  padding: 11px;
+  border: 2px solid var(--ink);
+  border-radius: 7px;
+  background: var(--paper);
+}
+
+#weather-card dt {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+#weather-card dd {
+  margin: 4px 0 0;
+  font-weight: 850;
+}
+
+#answer-text {
+  white-space: pre-wrap;
+}
+
+#answer-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 680px) {
+  .service-list {
+    grid-template-columns: 1fr;
+  }
+
+  .server-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .server-overview > :first-child {
+    grid-column: auto;
+  }
+
+  .table-tools,
+  .async-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .table-tools > div,
+  .async-controls > div,
+  .table-tools button,
+  .async-controls button {
+    width: 100%;
+  }
+
+  #weather-card dl {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  .service-card,
+  .async-status,
+  .detail-panel {
+    box-shadow: none;
+  }
+}

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>영역의 이름이 읽는 길을 만든다</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/day1-nav.js" defer></script>
+    <style>
+      .semantic-demo header,
+      .semantic-demo main,
+      .semantic-demo footer {
+        padding: 12px;
+        border: 1px solid #c4cede;
+      }
+      .semantic-demo article {
+        padding: 10px;
+        margin-top: 8px;
+        background: #eaf1ff;
+      }
+    </style>
+  </head>
+  <body class="lesson-page has-day1-sidebar">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치">
+        <span>Day 1</span><span>시맨틱 구조</span>
+      </nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">HTML 03</p>
+        <h1>영역의 이름이 읽는 길을 만든다</h1>
+        <p class="lesson-lead">
+          태그 이름으로 화면의 역할을 드러내면 다음 사람이 코드를 읽고 고치기
+          쉬워진다.
+        </p>
+      </header>
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">의미로 구분하기</p>
+          <h2>같은 상자처럼 보여도 태그마다 맡은 역할이 다르다</h2>
+        </div>
+        <p>
+          시맨틱 태그는 모양을 정하는 장식이 아니라 각 영역의 목적을 코드에
+          남기는 이름이다.<br />화면을 위에서 아래로 읽으며 다음 네 역할을
+          구분한다.
+        </p>
+        <ul class="lesson-points">
+          <li>
+            <strong><code>header</code>:</strong> 페이지나 특정 구역을 소개하는
+            제목과 안내를 묶는다.<br />문서 맨 위에서만 쓰는 태그가 아니며,
+            필요한 구역 안에도 소개 머리말로 사용할 수 있다.
+          </li>
+          <li>
+            <strong><code>main</code>:</strong> 현재 페이지에서 가장 중심이 되는
+            내용을 한 번 묶는다.<br />반복 메뉴나 부가 정보가 아니라 사용자가 이
+            페이지를 연 핵심 목적을 담는다.
+          </li>
+          <li>
+            <strong><code>section</code>:</strong> 같은 주제를 공유하는 내용을
+            제목과 함께 묶는다.<br />단지 테두리를 만들기 위한 상자가 아니라
+            “오늘의 일정”처럼 하나의 주제 단위를 표현한다.
+          </li>
+          <li>
+            <strong><code>article</code>:</strong> 일정 한 건이나 게시물처럼
+            따로 떼어도 의미가 통하는 독립 항목에 사용한다.<br />여러 article이
+            한 section 안에서 같은 종류의 콘텐츠로 반복될 수 있다.
+          </li>
+        </ul>
+      </section>
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">역할</p>
+          <h2>상자를 그리기 전에 역할을 나눈다</h2>
+        </div>
+        <p>
+          <code>header</code>는 페이지나 구역의 소개를, <code>main</code>은 그
+          페이지의 핵심 내용을 나타낸다.<br />단순한 모양은 CSS로 바뀌어도 이
+          역할은 유지된다.
+        </p>
+        <p>
+          <code>section</code>은 하나의 주제로 묶은 내용이고,
+          <code>article</code>은 혼자 떼어 읽어도 뜻이 통하는 항목이다.<br />이
+          구분은 나중에 JavaScript가 요소를 선택할 때도 도움이 된다.
+        </p>
+      </section>
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE</p>
+          <h2>강의 일정 화면을 실제로 읽기</h2>
+        </div>
+        <pre><code>&lt;header&gt;&lt;h3&gt;웹 기초 강의&lt;/h3&gt;&lt;/header&gt;
+&lt;main&gt;&lt;p&gt;오늘 핵심: HTML 구조 읽기&lt;/p&gt;&lt;/main&gt;
+&lt;section&gt;
+  &lt;h3&gt;오늘의 일정&lt;/h3&gt;
+  &lt;article&gt;목록 만들기&lt;/article&gt;
+  &lt;article&gt;CSS 시작하기&lt;/article&gt;
+&lt;/section&gt;
+&lt;footer&gt;준비물: 브라우저&lt;/footer&gt;</code></pre>
+        <div class="demo-surface semantic-demo">
+          <template data-day1-document="시맨틱 태그로 구성한 독립 문서">
+          <header><h3>웹 기초 강의</h3></header>
+          <!-- ***** TODO 1. 페이지 핵심 문장을 감싸는 main 요소 전체 작성하기 *****-->
+          <main><p>오늘 핵심: HTML 구조 읽기</p></main>
+          <!-- ************************************************************** -->
+          <section>
+            <h3>오늘의 일정</h3>
+            <article>목록 만들기</article>
+            <!-- ***** TODO 2. 두 번째 독립 일정을 나타내는 article 요소 전체 작성하기 *****-->
+            <article>CSS 시작하기</article>
+            <!-- ************************************************************** -->
+          </section>
+          <footer>준비물: 브라우저</footer>
+          </template>
+        </div>
+        <p>소개·핵심 문장·독립 일정이 서로 다른 태그로 나뉘는지 확인한다.<br />교안 자체의 <code>main</code> 안에 예제의 <code>main</code>을 중첩하지 않도록, 위 결과는 독립된 미리보기 문서에서 표시한다.</p>
+        <div class="callout is-warning">
+          <h3>구체적인 반례</h3>
+          <p>
+            모든 구역을 <code>div</code>로 써도 화면은 보일 수 있다.<br />그러나
+            ‘오늘의 일정’과 한 건의 일정이 어떤 관계인지 코드만 보고 알기
+            어렵다.
+          </p>
+        </div>
+      </section>
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE</p>
+          <h2>nav는 이동 경로, section은 도착할 주제를 나타낸다</h2>
+        </div>
+        <ul class="lesson-points">
+          <li><code>nav</code>에는 주요 탐색 링크를 묶는다.<br />모든 링크를 무조건 nav로 감싸기보다, 페이지 목차나 메뉴처럼 이동 경로 자체가 목적일 때 사용한다.</li>
+          <li><code>href="#morning-program"</code>은 현재 문서에서 해당 id를 가진 요소로 이동한다.<br />링크 문장은 사용자가 읽는 목적지 이름이고 id는 문서가 찾는 고유 식별자이다.</li>
+          <li><code>section</code>은 오전·오후라는 주제를, 그 안의 <code>article</code>은 독립적인 일정 한 건을 표현한다.<br />제목 수준도 이 관계에 맞춰 section의 h3 아래 article의 h4를 둔다.</li>
+        </ul>
+        <pre><code>&lt;nav aria-label="일정 바로가기"&gt;
+  &lt;a href="#morning-program"&gt;오전 일정&lt;/a&gt;
+  &lt;a href="#afternoon-program"&gt;오후 일정&lt;/a&gt;
+&lt;/nav&gt;
+&lt;section id="morning-program"&gt;
+  &lt;h3&gt;오전 일정&lt;/h3&gt;
+  &lt;article&gt;&lt;h4&gt;기획 회의&lt;/h4&gt;&lt;p&gt;09:30, 회의실 A&lt;/p&gt;&lt;/article&gt;
+&lt;/section&gt;
+&lt;section id="afternoon-program"&gt;
+  &lt;h3&gt;오후 일정&lt;/h3&gt;
+  &lt;article&gt;&lt;h4&gt;디자인 검토&lt;/h4&gt;&lt;p&gt;14:00, 회의실 B&lt;/p&gt;&lt;/article&gt;
+&lt;/section&gt;</code></pre>
+        <div class="demo-surface semantic-demo">
+          <!-- ***** TODO 3. 두 section으로 이동하는 nav와 a 요소 작성하기 *****-->
+          <nav aria-label="일정 바로가기">
+            <a href="#morning-program">오전 일정</a>
+            <a href="#afternoon-program">오후 일정</a>
+          </nav>
+          <!-- ************************************************************** -->
+          <section id="morning-program">
+            <h3>오전 일정</h3>
+            <article><h4>기획 회의</h4><p>09:30, 회의실 A</p></article>
+          </section>
+          <!-- ***** TODO 4. 오후 주제를 section으로, 독립 일정을 article로 묶기 *****-->
+          <section id="afternoon-program">
+            <h3>오후 일정</h3>
+            <article><h4>디자인 검토</h4><p>14:00, 회의실 B</p></article>
+          </section>
+          <!-- ************************************************************** -->
+        </div>
+      </section>
+      <nav class="lesson-pagination" aria-label="차시 이동">
+        <a href="02-text-list-tree.html">이전: 목록</a>
+        <a href="04-form-input.html">다음: 양식</a>
+      </nav>
+    </main>
+  </body>
+</html>

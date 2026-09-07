@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 2 · 09 · DOM을 선택하고 화면 글자 바꾸기</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/js-nav.js" defer></script>
+    <script src="09_dom_select.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day2">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치">
+        <span>Day 2</span><span>09</span><span>JavaScript · DOM</span>
+      </nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT · DOM SELECT</p>
+        <h1>DOM을 선택하고 화면 글자 바꾸기</h1>
+        <p class="lesson-lead">HTML을 읽은 뒤 요소를 찾고, 선택한 요소의 글자를 읽거나 바꾼다.<br />브라우저 문서, 실행 시점, 선택 결과를 나누어 화면 변경의 출발점을 만든다.</p>
+        <div class="lesson-meta"><span>DOM</span><span>script · defer</span><span>querySelector</span><span>null</span><span>textContent</span></div>
+      </header>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">HTML TO DOM</p>
+          <h2>브라우저가 HTML을 읽으면 요소 객체가 만들어진다</h2>
+        </div>
+        <p>DOM(Document Object Model)은 브라우저가 HTML을 읽고 만든 문서의 객체 표현이다.<br />JavaScript는 HTML 파일의 글자를 직접 고치는 대신 현재 DOM에서 제목이나 목록 요소를 찾아 화면을 바꾼다.</p>
+        <ul class="lesson-points">
+          <li><strong><code>document</code>는 현재 브라우저 문서를 가리킨다.</strong><br />문서 전체에서 요소를 찾는 출발점이다. 앞에서 문법을 실행한 Node에는 브라우저의 document가 기본 제공되지 않으므로 이 파일은 HTML을 브라우저로 열어 실행한다.</li>
+          <li><strong>바로 한 단계 아래는 자식, 그 아래까지 포함하면 후손이다.</strong><br /><code>section</code> 안의 <code>ul</code>은 자식이고, ul 안의 <code>li</code>는 section의 후손이다. 같은 ul을 부모로 공유하는 li들은 형제이다.</li>
+          <li><strong>현재 DOM을 바꾸어도 원본 HTML 파일이 저장되지는 않는다.</strong><br />JavaScript로 바꾼 문장은 개발자 도구의 Elements에서 확인할 수 있다. 페이지를 새로 열면 HTML을 다시 읽고 JavaScript도 다시 실행한다.</li>
+        </ul>
+        <pre><code>section#classroom
+├─ h3
+└─ ul
+   ├─ li.lesson
+   ├─ li.lesson
+   └─ li.lesson</code></pre>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">SCRIPT & DEFER</p>
+          <h2>HTML을 읽은 뒤에 요소를 찾도록 연결한다</h2>
+        </div>
+        <p><code>script</code>의 <code>src</code>는 실행할 JavaScript 파일의 경로이다.<br />외부 스크립트에 <code>defer</code>를 붙이면 브라우저는 HTML을 읽는 동안 파일을 가져오고, HTML 해석을 마친 뒤 실행한다.</p>
+        <pre><code>&lt;head&gt;
+  &lt;script src="09_dom_select.js" defer&gt;&lt;/script&gt;
+&lt;/head&gt;</code></pre>
+        <ul class="lesson-points">
+          <li><strong>요소가 만들어진 다음 찾을 수 있도록 실행 시점을 맞춘다.</strong><br />head에서 defer 없이 바로 실행하면 아직 읽지 않은 body의 요소를 찾지 못할 수 있다.</li>
+          <li><strong>defer는 선택자 오류를 고쳐 주는 옵션이 아니다.</strong><br />실행 시점이 맞아도 id나 class 철자가 틀리면 요소를 찾지 못한다. 파일 경로 오류는 개발자 도구의 Console과 Network에서 확인한다.</li>
+          <li><strong>현재 파일은 페이지를 열 때 한 번 실행된다.</strong><br />앞으로 버튼과 입력에 반응하게 하려면 실행할 함수를 이벤트에 연결해야 한다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">SELECT & TEXT</p>
+          <h2>요소 선택과 글자 읽기는 서로 다른 작업이다</h2>
+        </div>
+        <p><code>querySelector</code>는 CSS 선택자에 맞는 첫 번째 요소 하나를 반환한다.<br />그 결과는 문자열이 아니라 요소 객체이므로 요소 안의 글자가 필요할 때 <code>textContent</code>를 읽는다.</p>
+        <ul class="lesson-points">
+          <li><strong><code>document.querySelector("#classroom")</code>:</strong> 문서에서 id가 classroom인 요소를 찾는다.<br /><code>#</code>을 빼면 id가 아니라 태그 이름을 찾는 선택자가 된다.</li>
+          <li><strong><code>classroom.querySelector(".lesson")</code>:</strong> classroom의 후손 중 class가 lesson인 첫 요소를 찾는다.<br />문서 전체가 아니라 선택한 영역 안에서만 검색하므로 바깥의 같은 class는 포함하지 않는다.</li>
+          <li><strong><code>firstLesson.textContent</code>:</strong> 선택한 요소 안의 글자를 문자열로 읽는다.<br /><code>result.textContent = "새 문장"</code>처럼 대입하면 출력 요소의 기존 글자가 교체된다.</li>
+          <li><strong>찾는 요소가 없으면 <code>null</code>을 반환한다.</strong><br />null은 요소 객체가 아니므로 <code>null.textContent</code>를 읽을 수 없다. 속성을 사용하기 전에 <code>!== null</code>로 확인한다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE</p>
+          <h2>부모 영역 안에서 첫 수업을 찾아 출력한다</h2>
+        </div>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>요소 선택 → 글자 읽기 → 문장 출력</span><span>JavaScript</span></div>
+          <pre><code>const result = document.querySelector("#result");
+let classroom = null;
+
+// ***** TODO 1. #classroom 요소를 찾아 classroom에 저장하기 *****
+classroom = document.querySelector("#classroom");
+// **************************************************************
+
+// 선택한 부모 안에서 다시 찾으면 검색 범위가 그 영역으로 좁아진다.
+if (classroom !== null) {
+  const firstLesson = classroom.querySelector(".lesson");
+  if (firstLesson !== null) {
+    // ***** TODO 2. 첫 수업의 글자를 읽어 result에 안내 문장 표시하기 *****
+    result.textContent = "첫 수업: " + firstLesson.textContent;
+    // **************************************************************
+  }
+}</code></pre>
+        </div>
+        <div class="demo-surface">
+          <section id="classroom">
+            <h3>오늘의 수업</h3>
+            <ul>
+              <li class="lesson">HTML 구조</li>
+              <li class="lesson">DOM 트리</li>
+              <li class="lesson">부모와 자식</li>
+            </ul>
+          </section>
+          <p id="result" aria-live="polite">아직 첫 수업을 선택하지 않았다.</p>
+        </div>
+        <p>선택 결과는 첫 번째 li 요소이고, 그 요소의 textContent는 <code>"HTML 구조"</code>이다.<br />정상 출력은 <strong>첫 수업: HTML 구조</strong>이다. 목록의 나머지 항목은 지워지거나 자동으로 선택되지 않는다.</p>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE</p>
+          <h2>일치하는 첫 요소와 없는 요소를 구분한다</h2>
+        </div>
+        <p><code>"#book-list .book"</code>의 공백은 후손 관계를 나타낸다.<br />같은 class가 여러 개여도 querySelector는 첫 요소 하나만 반환하고, 일치하는 요소가 하나도 없으면 null을 반환한다.</p>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>첫 도서 선택과 null 분기</span><span>JavaScript</span></div>
+          <pre><code>const selectedBook = document.querySelector("#selected-book");
+const missingResult = document.querySelector("#missing-result");
+let firstBook = null;
+
+// ***** TODO 3. #book-list 안의 첫 .book 요소를 firstBook에 저장하기 *****
+firstBook = document.querySelector("#book-list .book");
+// **************************************************************
+
+// 요소 객체가 있을 때만 그 안의 글자를 읽는다.
+if (firstBook !== null) {
+  // ***** TODO 4. firstBook의 글자를 읽어 선택한 도서 문장으로 출력하기 *****
+  const bookTitle = firstBook.textContent;
+  selectedBook.textContent = "선택한 첫 도서: " + bookTitle;
+  // **************************************************************
+}
+
+// ***** TODO 5. 없는 .not-found 요소를 찾고 null이면 안내 표시하기 *****
+const missingBook = document.querySelector("#book-list .not-found");
+if (missingBook === null) {
+  missingResult.textContent = ".not-found에 해당하는 요소가 없어 null을 반환했다.";
+}
+// **************************************************************</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>책장</h3>
+          <ul id="book-list">
+            <li class="book">자바스크립트 첫걸음</li>
+            <li class="book">웹의 구조</li>
+            <li class="book">읽기 좋은 코드</li>
+          </ul>
+          <p id="selected-book" aria-live="polite">아직 도서를 선택하지 않았다.</p>
+          <p id="missing-result" aria-live="polite"></p>
+        </div>
+        <ul class="lesson-points">
+          <li>정상 결과는 <strong>선택한 첫 도서: 자바스크립트 첫걸음</strong>이다.<br />변수 firstBook은 li 요소이고, bookTitle은 그 안에서 읽은 문자열이다.</li>
+          <li><code>.not-found</code>는 실제 HTML에 없는 class이다.<br />의도적으로 없는 요소를 찾아도 null을 확인했으므로 오류 없이 안내를 표시한다.</li>
+          <li>요소가 없는 것과 선택자 문법이 잘못된 것은 다르다.<br /><code>"["</code>처럼 CSS 문법 자체가 틀리면 null 대신 예외가 발생한다. 선택자, 실행 시점, 파일 경로를 나누어 확인한다.</li>
+          <li>현재는 하나를 선택하는 <code>querySelector</code>에 집중한다.<br />여러 항목을 한꺼번에 찾는 <code>querySelectorAll</code>은 요소 모음을 반환하므로 한 요소와 같은 값으로 취급하지 않는다.</li>
+        </ul>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="주제 이동">
+        <a href="08_array_methods.html">이전: 배열 메서드로 데이터 가공하기</a>
+        <a href="10_dom_value_state.html">다음: 입력값과 요소 상태 다루기</a>
+      </nav>
+    </main>
+  </body>
+</html>

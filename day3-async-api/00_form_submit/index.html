@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 3 · 00 · 폼 제출과 입력 검증</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../../assets/lesson.css" />
+    <link rel="stylesheet" href="../../assets/day1.css" />
+    <link rel="stylesheet" href="../async.css" />
+    <script src="../../assets/js-nav.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day3">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치">
+        <span>Day 3</span><span>00</span><span>JavaScript · Form</span>
+      </nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">DAY 2 CONTINUED · FORM SUBMIT</p>
+        <h1>폼 제출과 입력 검증</h1>
+        <p class="lesson-lead">
+          이름 하나를 검사하는 작은 예제로 form 제출 흐름을 먼저 확인한다.<br />이후
+          이름·이메일·비밀번호를 받는 회원가입 폼에 같은 흐름을 적용한다.
+        </p>
+        <div class="lesson-meta">
+          <span>submit</span><span>event</span><span>preventDefault</span
+          ><span>value · trim</span><span>return</span><span>aria-invalid</span>
+        </div>
+      </header>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">SUBMIT EVENT</p>
+          <h2>버튼 클릭이 아니라 form의 제출을 처리한다</h2>
+        </div>
+        <p>
+          form은 관련된 입력값과 제출 동작을 하나로 묶는 HTML 요소이다.<br />form의
+          <code>submit</code> 이벤트를 처리하면 제출 버튼 클릭과 입력칸에서
+          Enter를 누르는 경로를 같은 함수로 다룰 수 있다.
+        </p>
+        <ul class="lesson-points">
+          <li>
+            <strong><code>type="submit"</code>:</strong> form을 제출하는
+            버튼이다.<br />현재 form과 관계없는 동작에 사용하는
+            <code>type="button"</code>과 역할이 다르다.
+          </li>
+          <li>
+            <strong><code>event</code>:</strong> 브라우저가 이벤트 처리 함수에
+            전달하는 객체이다.<br />어떤 이벤트가 발생했는지 확인하거나 이번
+            이벤트의 기본 동작을 제어할 수 있다.
+          </li>
+          <li>
+            <strong><code>event.preventDefault()</code>:</strong> form이 원래
+            수행하는 페이지 이동을 막는다.<br />현재 화면을 유지한 채 입력
+            검사와 DOM 출력을 이어 갈 수 있다.
+          </li>
+          <li>
+            <strong>preventDefault는 입력 검증이 아니다.</strong><br />기본
+            제출을 중단할 뿐이므로 올바른 값인지 판단하는 조건문은 별도로
+            작성해야 한다.
+          </li>
+        </ul>
+        <pre><code>function handleSubmit(event) {
+  event.preventDefault();
+  // 현재 화면에서 입력값을 검사하고 결과를 표시한다.
+}
+
+joinForm.addEventListener("submit", handleSubmit);</code></pre>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">VALIDATE &amp; RETURN</p>
+          <h2>정리하고 검사한 뒤 실패하면 함수를 끝낸다</h2>
+        </div>
+        <p>
+          빈 문자열뿐 아니라 공백만 입력한 경우도 막으려면 <code>trim()</code>을
+          먼저 적용한다.<br />검증에 실패했을 때 오류를 표시하고
+          <code>return</code>으로 끝내야 뒤의 성공 처리가 실행되지 않는다.
+        </p>
+        <ol class="lesson-points">
+          <li>
+            <strong>정리:</strong> <code>value.trim()</code>으로 입력값 앞뒤의
+            공백을 제거한다.<br /><code>" "</code>처럼 공백만 있는 값은 정리 후
+            빈 문자열이 된다.
+          </li>
+          <li>
+            <strong>검사:</strong> 정리한 값이 <code>""</code>인지 조건문으로
+            판단한다.<br />잘못된 입력에는 <code>aria-invalid="true"</code>와
+            구체적인 오류 문장을 함께 표시한다.
+          </li>
+          <li>
+            <strong>복구 준비:</strong> <code>focus()</code>로 사용자가 고쳐야
+            할 입력칸에 초점을 돌린다.<br />그다음 <code>return;</code>으로
+            함수를 끝내 성공 코드가 실행되지 않게 한다.
+          </li>
+          <li>
+            <strong>정상 처리:</strong> 올바른 값을 입력하면 이전
+            <code>aria-invalid</code>를 제거한다.<br />오류 상태를 남겨 두지
+            않고 정리된 값으로 성공 문장을 만든다.
+          </li>
+        </ol>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE 1</p>
+          <h2>공백 제출을 막고 정상 이름만 확인한다</h2>
+        </div>
+        <div class="code-panel">
+          <div class="code-panel-header">
+            <span>제출 중단 → 입력 정리 → 검증 → 상태 복구</span
+            ><span>JavaScript</span>
+          </div>
+          <pre><code>const joinForm = document.querySelector("#join-form");
+const nameInput = document.querySelector("#applicant-name");
+const formMessage = document.querySelector("#form-message");
+const submitButton = document.querySelector("#submit-join");
+
+function handleSubmit(event) {
+  // form의 기본 제출보다 현재 화면의 검증을 먼저 실행한다.
+  event.preventDefault();
+  let name = "";
+
+  // ***** TODO 1. 현재 입력값의 앞뒤 공백을 제거해 name에 저장하기 *****
+  name = nameInput.value.trim();
+  // **************************************************************
+
+  if (name === "") {
+    // ***** TODO 2. aria-invalid를 true로 설정하고 빈 이름 오류 표시하기 *****
+    nameInput.setAttribute("aria-invalid", "true");
+    formMessage.textContent = "이름을 한 글자 이상 입력해 주세요.";
+    // **************************************************************
+
+    nameInput.focus();
+    return;
+  }
+
+  // ***** TODO 3. 이전 오류 속성을 제거하고 신청 확인 문장 표시하기 *****
+  nameInput.removeAttribute("aria-invalid");
+  formMessage.textContent = name + "님의 신청을 확인했다.";
+  // **************************************************************
+}
+
+// 버튼 클릭과 Enter 제출을 하나의 함수로 처리한다.
+joinForm.addEventListener("submit", handleSubmit);
+
+// ***** TODO 4. submitButton의 disabled를 false로 바꾸어 제출 버튼 활성화하기 *****
+submitButton.disabled = false;
+// **************************************************************</code></pre>
+        </div>
+        <div class="demo-surface">
+          <form id="join-form" novalidate>
+            <label for="applicant-name">이름</label>
+            <input
+              id="applicant-name"
+              name="name"
+              type="text"
+              autocomplete="off"
+              aria-describedby="form-message"
+            />
+            <button id="submit-join" type="submit" disabled>신청 확인</button>
+          </form>
+          <p id="form-message" aria-live="polite">
+            이름을 입력한 뒤 신청을 확인할 수 있다.
+          </p>
+        </div>
+        <ul class="lesson-points">
+          <li>
+            공백만 입력하고 제출하면 오류 문장이 나타나고 입력칸으로 초점이
+            돌아간다.<br />return 때문에 아래의 성공 처리는 실행되지 않는다.
+          </li>
+          <li>
+            <code> 민지 </code>를 입력해 제출하면
+            <strong>민지님의 신청을 확인했다.</strong>가 나타난다.<br />앞뒤
+            공백과 이전 오류 상태가 함께 제거된다.
+          </li>
+          <li>
+            제출 버튼을 클릭하거나 입력칸에서 Enter를 눌러도 같은
+            <code>handleSubmit</code> 함수가 실행된다.<br />form의 submit 이벤트
+            하나가 두 입력 경로를 처리한다.
+          </li>
+          <li>
+            HTML에서는 버튼이 비활성 상태로 시작하고 이벤트 연결 후 JavaScript가
+            활성화한다.<br />버튼의 사용 가능 상태와 이벤트 연결은 서로 다른
+            작업이다.
+          </li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE 2</p>
+          <h2>이름·이메일·비밀번호를 검증하는 회원가입 폼</h2>
+        </div>
+        <p>
+          입력칸이 여러 개여도 처리 순서는 같다.<br />제출을 막고 값을 읽은 뒤
+          이전 오류를 지우고, 위에서부터 첫 번째로 발견한 오류를 표시한다.
+        </p>
+        <ul class="lesson-points">
+          <li>
+            <strong>입력값 읽기:</strong> 이름과 이메일은 앞뒤 공백을 제거하고,
+            비밀번호는 입력한 문자열 그대로 길이를 확인한다.<br />비밀번호의
+            앞뒤 공백을 임의로 제거하면 사용자가 입력한 값이 달라질 수 있다.
+          </li>
+          <li>
+            <strong>이전 상태 제거:</strong> 다시 제출할 때 세 입력칸의
+            <code>aria-invalid</code>를 먼저 제거한다.<br />이전 오류가 새 검사
+            결과처럼 남는 문제를 막는다.
+          </li>
+          <li>
+            <strong>첫 오류 안내:</strong> 이름 → 이메일 → 비밀번호 순서로
+            검사하고 첫 번째 잘못된 입력에 초점을 둔다.<br />사용자가 먼저 고칠
+            위치가 분명해진다.
+          </li>
+          <li>
+            <strong>수업용 이메일 검사:</strong> <code>includes("@")</code>는
+            조건문을 연습하기 위한 최소 검사이다.<br />실제 이메일 주소의
+            유효성이나 사용 가능 여부를 보장하지 않는다.
+          </li>
+          <li>
+            <strong>비밀번호 보호:</strong> 성공 문장에는 이름과 이메일만
+            표시하고 비밀번호는 다시 출력하지 않는다.<br />이 실습은 서버
+            전송이나 계정 생성을 수행하지 않는다.
+          </li>
+        </ul>
+        <div class="code-panel">
+          <div class="code-panel-header">
+            <span>여러 입력 읽기 → 첫 오류 찾기 → 성공 상태 표시</span
+            ><span>JavaScript</span>
+          </div>
+          <pre><code>const signupForm = document.querySelector("#signup-form");
+const signupNameInput = document.querySelector("#signup-name");
+const signupEmailInput = document.querySelector("#signup-email");
+const signupPasswordInput = document.querySelector("#signup-password");
+const signupMessage = document.querySelector("#signup-message");
+const signupSubmitButton = document.querySelector("#signup-submit");
+const signupInputs = [signupNameInput, signupEmailInput, signupPasswordInput];
+
+function handleSignup(event) {
+  let memberName = "";
+  let email = "";
+  let password = "";
+
+  // ***** TODO 5. 기본 제출을 막고 이름·이메일·비밀번호 값 읽기 *****
+  event.preventDefault();
+  memberName = signupNameInput.value.trim();
+  email = signupEmailInput.value.trim();
+  password = signupPasswordInput.value;
+  // **************************************************************
+
+  // ***** TODO 6. 세 입력 요소에 남아 있는 이전 오류 상태 제거하기 *****
+  signupInputs.forEach(function (input) {
+    input.removeAttribute("aria-invalid");
+  });
+  // **************************************************************
+
+  let invalidInput = null;
+  let errorMessage = "";
+
+  // ***** TODO 7. 이름·이메일·비밀번호 순서로 첫 오류 찾기 *****
+  if (memberName === "") {
+    invalidInput = signupNameInput;
+    errorMessage = "이름을 입력해 주세요.";
+  } else if (email === "" || !email.includes("@")) {
+    invalidInput = signupEmailInput;
+    errorMessage = "@를 포함한 이메일을 입력해 주세요.";
+  } else if (password.length &lt; 8) {
+    invalidInput = signupPasswordInput;
+    errorMessage = "비밀번호를 8자 이상 입력해 주세요.";
+  }
+  // **************************************************************
+
+  if (invalidInput) {
+    invalidInput.setAttribute("aria-invalid", "true");
+    signupMessage.textContent = errorMessage;
+    invalidInput.focus();
+    return;
+  }
+
+  // ***** TODO 8. 비밀번호를 제외한 가입 확인 문장을 표시하고 폼 비우기 *****
+  signupMessage.textContent = memberName + "님의 가입 정보를 확인했다. 이메일: " + email;
+  signupForm.reset();
+  signupNameInput.focus();
+  // **************************************************************
+}
+
+// ***** TODO 9. signup form의 submit 이벤트를 등록하고 버튼 활성화하기 *****
+signupForm.addEventListener("submit", handleSignup);
+signupSubmitButton.disabled = false;
+// **************************************************************</code></pre>
+        </div>
+        <div class="demo-surface">
+          <form id="signup-form" class="service-form" novalidate>
+            <div>
+              <label for="signup-name">이름</label>
+              <input
+                id="signup-name"
+                name="name"
+                type="text"
+                autocomplete="name"
+                required
+                aria-describedby="signup-message"
+              />
+            </div>
+            <div>
+              <label for="signup-email">이메일</label>
+              <input
+                id="signup-email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                placeholder="name@example.com"
+                required
+                aria-describedby="signup-message"
+              />
+            </div>
+            <div>
+              <label for="signup-password">비밀번호 (8자 이상)</label>
+              <input
+                id="signup-password"
+                name="password"
+                type="password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+                aria-describedby="signup-message"
+              />
+            </div>
+            <button id="signup-submit" type="submit" disabled>
+              가입 정보 확인
+            </button>
+          </form>
+          <p id="signup-message" aria-live="polite">
+            세 항목을 입력한 뒤 가입 정보를 확인한다.
+          </p>
+        </div>
+        <ul class="lesson-points">
+          <li>
+            모두 비우고 제출하면 이름 오류가 표시되고 이름 입력칸에 초점이 간다.
+          </li>
+          <li>
+            이름만 입력하면 이메일 오류가 표시되고,
+            <code>student.example.com</code>에는 @ 안내가 표시된다.
+          </li>
+          <li>
+            비밀번호가 8자보다 짧으면 비밀번호 입력칸에 오류 상태가 표시된다.
+          </li>
+          <li>
+            세 조건을 통과하면 이름과 이메일만 확인 문장에 표시되고 입력칸은
+            비워진다.
+          </li>
+        </ul>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="주제 이동">
+        <a href="../01_create_append/index.html"
+          >다음: 서비스 카드 만들고 삭제하기</a
+        >
+      </nav>
+    </main>
+  </body>
+</html>

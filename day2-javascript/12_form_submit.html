@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 2 · 12 · 폼 제출을 처리하고 빈 입력 막기</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/js-nav.js" defer></script>
+    <script src="12_form_submit.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day2">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치">
+        <span>Day 2</span><span>12</span><span>JavaScript · DOM</span>
+      </nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT · FORM SUBMIT</p>
+        <h1>폼 제출을 처리하고 빈 입력 막기</h1>
+        <p class="lesson-lead">버튼 클릭과 Enter 제출을 form의 submit 이벤트로 함께 처리한다.<br />기본 제출을 막고 입력을 검사한 뒤 오류와 성공 상태를 구분해 표시한다.</p>
+        <div class="lesson-meta"><span>submit</span><span>event</span><span>preventDefault</span><span>trim · return</span><span>검증 상태</span></div>
+      </header>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">SUBMIT</p>
+          <h2>버튼 클릭이 아니라 form의 제출을 듣는다</h2>
+        </div>
+        <p>form은 입력값을 묶어 제출하는 HTML 요소이다.<br />form의 submit 이벤트를 처리하면 제출 버튼 클릭과 입력칸에서 Enter를 누르는 경로를 같은 함수로 다룰 수 있다.</p>
+        <ul class="lesson-points">
+          <li><strong><code>type="submit"</code>:</strong> form을 제출하는 버튼이다.<br />단순 동작을 실행하는 <code>type="button"</code>과 목적이 다르다. 버튼의 click만 처리하면 다른 제출 경로를 놓칠 수 있다.</li>
+          <li><strong><code>event</code>:</strong> 브라우저가 이벤트 핸들러에 전달하는 이벤트 객체이다.<br />함수의 매개변수로 받아 이번에 발생한 이벤트의 기본 동작을 제어한다.</li>
+          <li><strong><code>event.preventDefault()</code>:</strong> form의 기본 제출 동작을 막는다.<br />페이지 이동 대신 현재 화면에서 입력 검사와 결과 출력을 이어 갈 수 있다.</li>
+          <li><strong>preventDefault는 입력 검증도 서버 요청도 아니다.</strong><br />기본 동작을 중단할 뿐이므로 검증 조건과 성공 후 처리는 별도로 작성해야 한다.</li>
+        </ul>
+        <pre><code>function handleSubmit(event) {
+  event.preventDefault();
+  // 현재 화면에서 입력값을 검사하고 결과를 표시한다.
+}
+
+joinForm.addEventListener("submit", handleSubmit);</code></pre>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">VALIDATE & RETURN</p>
+          <h2>정리하고 검사한 뒤 실패하면 함수를 끝낸다</h2>
+        </div>
+        <p>빈 문자열뿐 아니라 공백만 입력한 경우도 막으려면 trim을 먼저 적용한다.<br />검증에 실패했을 때는 오류를 표시하고 return으로 함수를 끝내야 뒤의 성공 처리가 실행되지 않는다.</p>
+        <ul class="lesson-points">
+          <li><strong>정리:</strong> <code>"   "</code>는 원래 길이가 있지만 trim 뒤에는 <code>""</code>가 된다.<br />정리한 name을 검사와 성공 메시지에 함께 사용하면 두 처리의 기준이 달라지지 않는다.</li>
+          <li><strong>검사:</strong> <code>name === ""</code>이면 실제 이름 내용이 없다.<br />사용자가 무엇을 고쳐야 하는지 오류 문장을 보여 주고 입력칸에 다시 초점을 둔다.</li>
+          <li><strong>종료:</strong> 값 없는 <code>return;</code>은 현재 함수 실행을 끝낸다.<br />기본 제출 동작을 취소하는 preventDefault와 역할이 다르다. return만 쓴다고 form의 기본 제출이 취소되지는 않는다.</li>
+          <li><strong>복구:</strong> 정상 이름을 입력했을 때는 이전 오류 상태도 제거한다.<br />성공 문장만 바꾸면 입력칸의 오류 표시가 남을 수 있으므로 상태와 안내를 함께 맞춘다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">ERROR STATE</p>
+          <h2>오류는 색뿐 아니라 문장과 상태로 알린다</h2>
+        </div>
+        <p><code>aria-invalid="true"</code>는 입력값이 잘못되었다는 상태를 보조 기술에 알린다.<br />이 자료의 공통 CSS는 이 상태에 오류 스타일을 적용하고, 옆의 안내 문장은 무엇을 입력해야 하는지 설명한다.</p>
+        <ul class="lesson-points">
+          <li><code>aria-describedby="form-message"</code>는 입력칸과 안내 문장을 연결한다.<br />입력칸의 이름을 연결하는 label의 for와는 별개로 부가 설명을 제공한다.</li>
+          <li><code>nameInput.focus()</code>는 초점을 입력칸으로 이동시킨다.<br />오류 안내를 읽은 뒤 바로 값을 수정할 수 있게 돕는다.</li>
+          <li><code>removeAttribute("aria-invalid")</code>는 이전 오류 속성을 제거한다.<br />정상 상태에서 오류를 해제하는 동작이며 입력값 자체를 지우지는 않는다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE</p>
+          <h2>공백 제출을 막고 정상 이름만 확인한다</h2>
+        </div>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>기본 제출 중단 → 입력 검증 → 결과 표시</span><span>JavaScript</span></div>
+          <pre><code>const joinForm = document.querySelector("#join-form");
+const nameInput = document.querySelector("#applicant-name");
+const formMessage = document.querySelector("#form-message");
+const submitButton = document.querySelector("#submit-join");
+
+function handleSubmit(event) {
+  // 기본 제출은 먼저 막는다. 검증 여부와 관계없이 현재 화면에서 처리한다.
+  event.preventDefault();
+  let name = "";
+
+  // ***** TODO 1. 현재 입력값의 앞뒤 공백을 제거해 name에 저장하기 *****
+  name = nameInput.value.trim();
+  // **************************************************************
+
+  if (name === "") {
+    // ***** TODO 2. aria-invalid를 true로 설정하고 빈 이름 오류 표시하기 *****
+    nameInput.setAttribute("aria-invalid", "true");
+    formMessage.textContent = "이름을 한 글자 이상 입력해 주세요.";
+    // **************************************************************
+
+    // 실패 시 여기서 끝내야 아래 성공 문장이 오류를 덮어쓰지 않는다.
+    nameInput.focus();
+    return;
+  }
+
+  // ***** TODO 3. 이전 오류 속성을 제거하고 신청 확인 문장 표시하기 *****
+  nameInput.removeAttribute("aria-invalid");
+  formMessage.textContent = name + "님의 신청을 확인했다.";
+  // **************************************************************
+}
+
+// form에 등록하므로 제출 버튼과 Enter 입력을 같은 함수로 처리한다.
+joinForm.addEventListener("submit", handleSubmit);
+
+// ***** TODO 4. submitButton의 disabled를 false로 바꾸어 제출 버튼 활성화하기 *****
+submitButton.disabled = false;
+// **************************************************************</code></pre>
+        </div>
+        <div class="demo-surface">
+          <form id="join-form" novalidate>
+            <label for="applicant-name">이름</label>
+            <input id="applicant-name" name="name" type="text" autocomplete="off" aria-describedby="form-message" />
+            <button id="submit-join" type="submit" disabled>신청 확인</button>
+          </form>
+          <p id="form-message" aria-live="polite">이름을 입력한 뒤 신청을 확인할 수 있다.</p>
+        </div>
+        <ul class="lesson-points">
+          <li>공백을 넣고 제출하면 <strong>이름을 한 글자 이상 입력해 주세요.</strong>가 나타난다.<br />초점이 입력칸으로 돌아오고 return 때문에 성공 문장은 실행되지 않는다.</li>
+          <li><code>  민지  </code>로 고쳐 제출하면 <strong>민지님의 신청을 확인했다.</strong>가 나타난다.<br />앞뒤 공백은 결과에서 제거되고 이전 aria-invalid 속성도 사라진다.</li>
+          <li>버튼 클릭과 Enter 제출은 같은 handleSubmit 함수를 실행한다.<br />preventDefault를 함수 시작에서 호출하므로 성공과 실패 모두 페이지 이동 없이 처리된다.</li>
+          <li>HTML에서는 버튼이 비활성으로 시작하고 이벤트 연결 후 활성화한다.<br />버튼의 사용 가능 상태와 이벤트 연결은 서로 다른 작업이므로 순서를 구분한다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">BROWSER VALIDATION</p>
+          <h2>이 예제의 확인 문장은 실제 신청 저장이 아니다</h2>
+        </div>
+        <p><code>novalidate</code>는 브라우저 내장 검증 메시지 대신 JavaScript 검증 흐름을 관찰하기 위한 설정이다.<br />실제 form에서는 required 같은 HTML 검증과 JavaScript 검증을 목적에 맞게 함께 사용할 수 있다.</p>
+        <p>현재 코드는 값을 검사하고 화면에 확인 문장을 표시하는 데서 끝난다.<br />서버 전송이나 신청 저장은 실행하지 않는다. 브라우저 코드는 우회할 수 있으므로 실제 서비스를 만들 때는 서버에서도 입력값을 별도로 검사해야 한다.</p>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="주제 이동">
+        <a href="11_events.html">이전: 이벤트가 발생할 때 함수 실행하기</a>
+      </nav>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,210 @@
+/* Day 1 전용 탐색 UI. 다른 일차의 lesson.css와 실습 규칙은 변경하지 않는다. */
+.day1-sidebar {
+  min-width: 0;
+  width: min(960px, calc(100% - 24px));
+  margin: 16px auto 0;
+}
+
+.day1-nav-panel {
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+
+.day1-nav-panel > summary {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: var(--yellow);
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.day1-nav-panel[open] > summary {
+  border-bottom: 2px solid var(--ink);
+  border-radius: 8px 8px 0 0;
+}
+
+.day1-nav-caption {
+  margin: 0;
+  padding: 14px 14px 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+}
+
+.day1-nav-list,
+.day1-section-list {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 6px 10px 12px;
+  list-style: none;
+}
+
+.day1-nav-list a {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 7px;
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 750;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.day1-nav-number {
+  flex: 0 0 2.1rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.day1-nav-list a:hover,
+.day1-section-list a:hover {
+  background: var(--blue-soft);
+  color: var(--blue-dark);
+}
+
+.day1-nav-list a[aria-current="page"] {
+  border-color: var(--ink);
+  background: var(--cyan);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.day1-current-sections {
+  border-top: 2px solid var(--line-soft);
+}
+
+.day1-section-list a {
+  display: block;
+  padding: 7px 8px;
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 0.79rem;
+  line-height: 1.55;
+  text-decoration: none;
+}
+
+.has-day1-sidebar .lesson-section {
+  scroll-margin-top: 20px;
+}
+
+.has-day1-sidebar .lesson-section > p,
+.has-day1-sidebar .lesson-lead {
+  text-wrap: pretty;
+}
+
+.has-day1-sidebar .lesson-points + pre,
+.has-day1-sidebar .lesson-points + .code-panel {
+  margin-top: 18px;
+}
+
+.has-day1-sidebar .lesson-shell:focus {
+  outline: none;
+}
+
+.day1-table-scroll {
+  max-width: 100%;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+.day1-table-scroll > table {
+  margin: 0;
+}
+
+.has-day1-sidebar [tabindex="0"]:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.day1-html-note {
+  margin: 0;
+  padding: 12px;
+  border-left: 5px solid var(--blue);
+  background: var(--blue-soft);
+}
+
+.day1-document-preview {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+  border: 0;
+}
+
+/* flex-wrap 작성 전의 넘침은 예제 안에서 확인하며, 본문 너비는 유지한다. */
+.flex-lesson .fl-wrap {
+  overflow-x: auto;
+}
+
+.day1-form-options label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.day1-form-options input[type="checkbox"],
+.day1-form-options input[type="radio"] {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  padding: 0;
+  accent-color: var(--blue);
+}
+
+.day1-form-options fieldset {
+  min-width: 0;
+  margin: 0 0 18px;
+  padding: 16px;
+  border: 2px solid var(--line-soft);
+  border-radius: 8px;
+}
+
+.day1-form-options legend {
+  padding: 0 6px;
+  font-weight: 850;
+}
+
+@media (min-width: 1180px) {
+  body.day1-nav-ready {
+    display: grid;
+    /* 목차 자리만큼 오른쪽에도 여백을 확보해 본문 중심을 화면 중심에 맞춘다. */
+    grid-template-columns: 240px minmax(0, 960px) 240px;
+    gap: 32px;
+    justify-content: center;
+    padding-inline: 24px;
+  }
+
+  .day1-nav-ready > .lesson-shell {
+    grid-column: 2;
+    width: 100%;
+    margin: 0;
+  }
+
+  .day1-sidebar {
+    /* 본문의 중앙 정렬과 독립적으로 목차를 화면 왼쪽 여백에 고정한다. */
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    width: 240px;
+    max-height: calc(100vh - 48px);
+    margin: 0;
+    padding: 0 5px 5px 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+@media print {
+  .day1-sidebar { display: none; }
+  body.day1-nav-ready { display: block; padding: 0; }
+  .day1-table-scroll { overflow: visible; }
+}

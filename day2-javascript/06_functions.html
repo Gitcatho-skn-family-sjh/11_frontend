@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript 06 · 입력을 받아 결과를 돌려주는 함수</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/js-nav.js" defer></script>
+    <script src="06_functions.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day2">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치"><span>Day 2</span><span>06</span><span>JavaScript</span></nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT 06</p>
+        <h1>입력을 받아 결과를 돌려주는 함수</h1>
+        <p class="lesson-lead">반복해서 사용할 처리에 이름을 붙이고 필요한 값을 전달한다.<br />함수의 정의·호출·출력·반환을 서로 구분한다.</p>
+      </header>
+      <p>이 페이지의 EXAMPLE은 <code>06_functions.js</code>의 연속된 구간이다.<br />브라우저 Console 또는 파일이 있는 폴더의 <code>node 06_functions.js</code> 명령으로 전체 실행 결과를 확인할 수 있다.</p>
+      <section class="lesson-section"><div class="section-heading"><p class="section-kicker">FUNCTION</p><h2>함수 정의는 처리 방법을 준비하고 호출은 실행한다</h2></div><p>함수는 필요한 값을 받아 처리한 뒤 결과를 돌려줄 수 있는 코드 묶음이다.<br />같은 계산을 주문마다 반복해서 사용할 때, 입력만 바꿔 같은 함수로 처리할 수 있다.</p><ul class="lesson-points"><li><strong>함수 선언에는 이름·매개변수·본문이 있다.</strong> <code>function calculateTotal(unitPrice, count) { ... }</code>는 처리 방법을 정의한다.<br />정의한 것만으로 주문 금액이 계산되어 출력되지는 않는다.</li>
+<li><strong>함수 이름 뒤 괄호가 호출을 나타낸다.</strong> <code>calculateTotal(3200, 2)</code>는 함수를 실제로 실행한다.<br />괄호 안에는 이번 호출에서 사용할 값을 전달한다.</li>
+<li><strong>매개변수와 인수는 역할이 다르다.</strong> unitPrice와 count는 정의에 적은 값의 이름인 매개변수이다.<br />호출할 때 전달한 3200과 2는 실제 값인 인수이며, 순서대로 대응한다.</li>
+<li><strong><code>return</code>은 호출한 자리로 값을 돌려준다.</strong> 반환값을 변수에 저장하거나 다른 계산에 사용할 수 있다.<br />return을 만나면 함수의 실행은 즉시 끝나므로 그 뒤 문장은 실행하지 않는다.</li></ul></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>두 주문에 같은 계산 함수를 호출하기</h2></div><p>단가와 수량을 곱한 값을 반환한다.<br />수량이 0 이하이면 계산을 계속하지 않고 0을 먼저 반환한다.</p><ul class="lesson-points"><li><strong>커피 호출은 <code>3200 × 2</code>이다.</strong> unitPrice에 3200, count에 2가 연결되어 calculation은 6400이 된다.<br />그 반환값이 coffeeTotal에 저장되어 출력과 합산에 다시 쓰인다.</li>
+<li><strong>빵 호출은 같은 함수에 다른 입력을 넣는다.</strong> 4500과 3을 전달하면 13500을 반환한다.<br />각 호출의 매개변수와 지역 계산은 별개이며, 이전 호출의 값을 이어서 누적하지 않는다.</li>
+<li><strong>앞에서 return하는 분기를 조기 반환이라고 한다.</strong> count가 0 또는 -1이면 함수 앞부분에서 끝난다.<br />이 예제는 숫자 입력을 전제로 하며, 이 조건 하나가 모든 잘못된 입력을 검증하는 것은 아니다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>06_functions.js</span><span>EXAMPLE</span></div><pre><code>function calculateTotal(unitPrice, count) {
+  // ***** TODO 1. 수량이 0 이하이면 0을 반환하고 종료하기 *****
+  if (count &lt;= 0) {
+    return 0;
+  }
+  // **************************************************************
+  const calculation = unitPrice * count;
+  // ***** TODO 2. 계산한 금액을 호출한 자리로 반환하기 *****
+  return calculation;
+  // **************************************************************
+}
+const coffeeTotal = calculateTotal(3200, 2);
+const breadTotal = calculateTotal(4500, 3);
+console.log("커피 주문 금액:", coffeeTotal);
+console.log("빵 주문 금액:", breadTotal);
+console.log("두 주문 합계:", coffeeTotal + breadTotal);
+console.log("수량 0:", calculateTotal(3200, 0));
+console.log("음수 수량:", calculateTotal(3200, -1));</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">커피 주문 금액: 6400
+빵 주문 금액: 13500
+두 주문 합계: 19900
+수량 0: 0
+음수 수량: 0</pre></div><p>두 반환값은 6400과 13500이고 합계는 19900이다.<br />수량이 0 또는 음수인 경우에는 0을 반환하여 정상 계산과 다른 경로로 끝난다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>console.log로 보이는 값과 return으로 받은 값은 다르다</h2></div><p>printTotal은 금액을 출력하지만 계산값을 반환하지 않는다.<br />calculateTotal은 금액을 반환하므로 호출한 쪽에서 다시 계산할 수 있다.</p><ul class="lesson-points"><li><strong>출력은 값을 관찰하는 동작이다.</strong> console에 6400이 보였다고 함수의 반환값도 6400인 것은 아니다.<br />값을 반환하는 return 없이 함수 끝에 도달하면 undefined가 반환된다.</li>
+<li><strong>반환은 다른 코드로 값을 전달하는 동작이다.</strong> returnedResult에는 숫자 6400이 들어 있어 1000을 더할 수 있다.<br />계산·검증 결과를 다른 곳에서 쓸 함수라면 무엇을 반환할지 정한다.</li>
+<li><strong>함수 안과 밖의 출력 순서를 읽는다.</strong> printTotal을 호출하면 함수 안 출력이 먼저 실행된다.<br />호출이 끝나야 바깥의 printedResult 출력으로 진행한다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>06_functions.js</span><span>EXAMPLE</span></div><pre><code>function printTotal(unitPrice, count) {
+  console.log("함수 안 출력:", unitPrice * count);
+}
+const printedResult = printTotal(3200, 2);
+const returnedResult = calculateTotal(3200, 2);
+console.log("출력 함수의 반환값:", printedResult);
+console.log("계산 함수의 반환값:", returnedResult);
+console.log("반환값에 1000 더하기:", returnedResult + 1000);</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">함수 안 출력: 6400
+출력 함수의 반환값: undefined
+계산 함수의 반환값: 6400
+반환값에 1000 더하기: 7400</pre></div><p>화면에 출력한 금액은 6400이지만 printTotal의 반환값은 undefined이다.<br />반환을 사용한 함수의 결과 6400은 다음 계산에서 7400이 된다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>지역 변수와 기본 매개변수로 인사 문장 만들기</h2></div><p>함수 안의 message는 함수 밖의 message와 별개의 지역 이름이다.<br />makeGreeting은 지역 문장을 반환하고, 호출한 쪽은 그 반환값을 받아 출력한다.</p><ul class="lesson-points"><li><strong>함수 안의 값은 함수의 범위에 속한다.</strong> 매개변수 name과 내부 const message는 makeGreeting 안에서 사용한다.<br />바깥에서는 내부 변수를 직접 읽는 대신 반환값을 받는다.</li>
+<li><strong>기본 매개변수는 인수가 없을 때 사용할 값이다.</strong> <code>name = &quot;방문자&quot;</code>는 인수를 생략하거나 undefined를 전달하면 적용된다.<br />빈 문자열은 실제로 전달한 값이므로 기본값으로 자동 교체되지 않는다.</li>
+<li><strong>같은 이름을 사용해도 바깥 값은 바뀌지 않는다.</strong> 함수 안에서 새로운 const message를 선언했기 때문이다.<br />기존 바깥 변수에 대입하는 것과 내부에 새 변수를 선언하는 것을 구분한다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>06_functions.js</span><span>EXAMPLE</span></div><pre><code>const message = "함수 밖 문장";
+function makeGreeting(name = "방문자") {
+  const message = `안녕하세요, ${name}님.`;
+  // ***** TODO 3. 함수 안에서 만든 인사 문장을 반환하기 *****
+  return message;
+  // **************************************************************
+}
+console.log("이름 전달:", makeGreeting("하늘"));
+console.log("인수 생략:", makeGreeting());
+console.log("undefined 전달:", makeGreeting(undefined));
+console.log("빈 문자열 전달:", makeGreeting(""));
+console.log("바깥 문장 유지:", message);</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">이름 전달: 안녕하세요, 하늘님.
+인수 생략: 안녕하세요, 방문자님.
+undefined 전달: 안녕하세요, 방문자님.
+빈 문자열 전달: 안녕하세요, 님.
+바깥 문장 유지: 함수 밖 문장</pre></div><p>이름을 전달하면 하늘님, 생략하거나 undefined를 전달하면 방문자님으로 출력된다.<br />빈 문자열을 전달한 결과에는 이름이 없지만, 바깥의 message는 처음 문장 그대로 유지된다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>함수 표현식을 변수에 저장하고 필요할 때 호출하기</h2></div><p>함수 표현식은 함수를 하나의 값으로 만들어 변수에 저장하는 방식이다.<br />이 예제의 <code>function (amount) { ... }</code>는 자체 이름을 생략한 익명 함수이고, applyDiscount를 통해 호출한다.</p><ul class="lesson-points"><li><strong>선언과 표현식은 함수를 만드는 두 형태이다.</strong> 함수 선언은 function 뒤에 이름을 적고, 표현식은 만든 함수 값을 변수에 대입한다.<br />여기서는 함수 값이 준비된 다음 줄에서만 호출한다.</li>
+<li><strong><code>applyDiscount</code>는 함수 자체이다.</strong> savedFunction에도 같은 함수 값이 들어가므로 두 이름으로 호출할 수 있다.<br />함수를 저장하는 시점에는 함수 본문이 실행되지 않는다.</li>
+<li><strong><code>applyDiscount(5000)</code>는 호출한 결과이다.</strong> 괄호 때문에 지금 실행되며 반환한 숫자 4000이 저장된다.<br />함수의 자료형 function과 호출 결과의 자료형 number는 서로 다르다.</li>
+<li><strong>호출할 수 있는 값인지 확인한다.</strong> 이 코드에서는 typeof 값이 function인 경우에만 호출한다.<br />함수 값이 아직 없는 상태에서 괄호를 붙여 호출하지 않도록 처리 경로를 나눈다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>06_functions.js</span><span>EXAMPLE</span></div><pre><code>let applyDiscount;
+// ***** TODO 4. 금액에서 1000을 뺀 값을 반환하는 함수 표현식 저장하기 *****
+applyDiscount = function (amount) {
+  return amount - 1000;
+};
+// **************************************************************
+if (typeof applyDiscount === "function") {
+  const savedFunction = applyDiscount;
+  const discountedAmount = applyDiscount(5000);
+  console.log("함수 자체의 자료형:", typeof savedFunction);
+  console.log("호출 결과의 자료형:", typeof discountedAmount);
+  console.log("할인한 금액:", discountedAmount);
+  console.log("저장한 함수 호출:", savedFunction(8000));
+} else {
+  console.log("할인 함수 값:", applyDiscount);
+}</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">함수 자체의 자료형: function
+호출 결과의 자료형: number
+할인한 금액: 4000
+저장한 함수 호출: 7000</pre></div><p>함수 자체는 function, 호출 결과는 number로 출력된다.<br />저장한 함수에 8000을 전달해도 같은 할인 계산을 적용하므로 7000을 반환한다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">NEXT</p><h2>함수를 값으로 다루면 다른 함수에도 전달할 수 있다</h2></div><p>숫자나 문자열을 인수로 전달했던 것처럼 함수도 인수로 전달할 수 있다.<br />다음 주제에서는 익명 함수를 더 짧게 표현하는 화살표 함수와, 전달받은 함수를 호출하는 콜백을 연결한다.</p></section>
+      <nav class="lesson-pagination" aria-label="주제 이동">
+        <a href="05_loops.html">이전: 반복문</a>
+        <a href="07_arrow_callbacks.html">다음: 화살표 함수와 콜백</a>
+      </nav>
+    </main>
+  </body>
+</html>

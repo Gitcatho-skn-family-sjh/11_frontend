@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fetch로 AI 응답 사용하기</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="../../assets/lesson.css" />
+  <link rel="stylesheet" href="../../assets/day1.css" />
+  <link rel="stylesheet" href="../async.css" />
+  <script src="../../assets/js-nav.js" defer></script>
+  <script src="../provided.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="lesson-page has-day1-sidebar" data-lesson-track="day3">
+  <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+  <main id="lesson-content" class="lesson-shell">
+    <nav class="lesson-breadcrumb" aria-label="현재 위치"><span>Day 3</span><span>배열 · DOM · Fetch</span></nav>
+    <header class="lesson-hero">
+      <p class="lesson-kicker">DAY 3 · DATA &amp; FETCH 07</p>
+      <h1>Fetch로 AI 응답을 화면에 표시한다</h1>
+      <p class="lesson-lead">질문을 JSON 본문으로 보내고 text 또는 JSON 응답을 읽는다.<br />같은 답변도 응답 형식에 따라 처리 코드가 달라지는 이유를 확인한다.</p>
+    </header>
+
+    <section class="lesson-section" id="request-flow">
+      <div class="section-heading"><p class="section-kicker">POST REQUEST</p><h2>질문 객체를 전송 가능한 JSON 문자열로 바꾼다</h2></div>
+      <p>질문은 URL에 붙이지 않고 POST 요청의 body에 넣는다.<br />JavaScript 객체를 그대로 보낼 수 없으므로 <code>JSON.stringify</code>로 JSON 문자열을 만든다.</p>
+      <pre><code>const endpoint = lessonApiUrl(`/api/openai/${responseFormat.value}`);
+const options = {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ prompt, mode: aiMode.value })
+};
+const response = await fetch(endpoint, options);</code></pre>
+      <ul class="lesson-points">
+        <li><strong>입력은 전송 전에 검사한다.</strong> 앞뒤 공백을 제거한 질문이 비어 있으면 fetch를 호출하지 않는다.<br />서버도 1~500자 규칙을 다시 검사하므로 브라우저 검사만 신뢰하지 않는다.</li>
+        <li><strong>Content-Type은 요청 본문의 형식을 알린다.</strong> 서버는 이 헤더를 보고 body를 JSON 객체로 해석한다.<br />응답 형식은 선택한 endpoint가 결정하며 요청 헤더 하나로 text와 JSON이 자동 전환되지 않는다.</li>
+        <li><strong>mock과 live의 브라우저 코드는 같다.</strong> mode 값만 달라지고 요청·상태·DOM 처리 흐름은 유지된다.<br />먼저 mock으로 완성한 뒤 필요할 때만 live 연결을 확인한다.</li>
+      </ul>
+    </section>
+
+    <section class="lesson-section" id="response-body">
+      <div class="section-heading"><p class="section-kicker">TEXT OR JSON</p><h2>응답 본문은 한 번만, 약속된 형식으로 읽는다</h2></div>
+      <p><code>/api/openai/text</code>는 일반 문자열을, <code>/api/openai/json</code>은 속성을 가진 객체를 반환한다.<br />Response 객체 자체가 답변은 아니며, 본문 읽기 메서드를 await 해야 실제 값을 얻는다.</p>
+      <pre><code>if (formatSelect.value === "text") {
+  answerText = await response.text();
+} else {
+  rawData = await response.json();
+  answerText = rawData.text;
+}</code></pre>
+      <ul class="lesson-points">
+        <li><strong><code>text()</code>는 본문 전체를 문자열로 읽는다.</strong> 바로 textContent에 넣을 수 있지만 출처나 모델 같은 값을 별도 속성으로 구분하기 어렵다.<br />이 예제의 text 응답에는 출처 표식도 문자열 안에 포함된다.</li>
+        <li><strong><code>json()</code>은 JSON 텍스트를 객체로 해석한다.</strong> <code>data.text</code>, <code>data.source</code>, <code>data.model</code>처럼 각 값을 따로 사용할 수 있다.<br />화면 요소가 여러 종류의 정보를 나눠 보여 줄 때 적합하다.</li>
+        <li><strong>한 응답 본문을 두 번 읽지 않는다.</strong> text를 읽은 뒤 같은 response에서 json을 다시 호출하면 실패한다.<br />endpoint의 계약을 알고 조건에 맞는 메서드 하나만 선택한다.</li>
+      </ul>
+    </section>
+
+    <section class="lesson-section" id="example">
+      <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>같은 질문을 text와 JSON으로 비교한다</h2></div>
+      <p>mock을 선택하면 API 키 없이 고정된 짧은 답변이 나온다.<br />응답 형식을 바꾸어 결과 문장과 원본 본문의 차이를 비교한다.</p>
+      <div class="demo-surface">
+        <form id="ai-form" aria-busy="false" novalidate>
+          <label for="prompt">AI에게 보낼 질문</label>
+          <textarea id="prompt" name="prompt" rows="4" maxlength="500">Fetch API를 한 문장으로 설명해 줘.</textarea>
+          <div class="async-controls">
+            <div><label for="ai-mode">응답 방식</label><select id="ai-mode"><option value="mock">mock · 키 없이 연습</option><option value="live">live · 실제 OpenAI</option></select></div>
+            <div><label for="response-format">응답 형식</label><select id="response-format"><option value="text">text/plain</option><option value="json">application/json</option></select></div>
+            <button id="ask-button" type="submit">질문 보내기</button>
+          </div>
+        </form>
+        <p id="ai-status" class="async-status" data-state="idle" role="status" aria-live="polite">요청 전이다.</p>
+        <article id="ai-result" class="callout" hidden>
+          <p><strong>AI 응답</strong> <code id="format-badge">-</code></p>
+          <p id="answer-text"></p>
+          <p id="answer-meta"></p>
+        </article>
+        <details><summary>받은 원본 보기</summary><pre><code id="ai-raw">아직 받은 응답이 없다.</code></pre></details>
+      </div>
+      <ul class="lesson-points">
+        <li><strong>text 선택은 문자열을 그대로 표시한다.</strong> badge에 text/plain이 보이고 원본 보기에도 같은 문자열이 표시된다.<br />문자열에 포함된 줄바꿈은 화면에서 읽을 수 있도록 유지한다.</li>
+        <li><strong>JSON 선택은 객체에서 필요한 값을 꺼낸다.</strong> 답변은 text에, 출처와 모델은 보조 정보에 배치한다.<br />원본 보기에서는 객체가 가진 세 속성을 함께 확인한다.</li>
+        <li><strong>오류이면 이전 답변을 숨긴다.</strong> live 실행 조건이 없으면 503 안내를 보여 주고 입력과 버튼을 복구한다.<br />mock으로 바꾸어 다시 요청하면 페이지를 새로 열지 않고도 정상 상태로 돌아온다.</li>
+      </ul>
+    </section>
+
+    <section class="lesson-section" id="security">
+      <div class="section-heading"><p class="section-kicker">API KEY</p><h2>OpenAI 키와 모델 이름은 server.py의 환경변수로 관리한다</h2></div>
+      <p>live 요청에서도 app.js는 OpenAI 주소와 API 키를 직접 사용하지 않는다.<br />server.py가 <code>OPENAI_API_KEY</code>와 <code>OPENAI_MODEL</code>을 읽어 Responses API에 요청한다.</p>
+      <ul class="lesson-points">
+        <li><strong>브라우저 코드는 사용자에게 전달된다.</strong> 키를 app.js의 상수나 HTML 속성에 넣으면 개발자 도구에서 확인할 수 있다.<br />키는 서버 프로세스에만 설정하고 저장소, HTML, JavaScript, 화면 응답에 포함하지 않는다.</li>
+        <li><strong>live는 명시적으로 허용한다.</strong> <code>--allow-live-api</code> 없이 실행하면 키가 설정되어 있어도 외부 요청을 보내지 않는다.<br />실습 중 예상하지 못한 호출과 비용을 줄이기 위한 경계이다.</li>
+        <li><strong>출력 길이에도 상한을 둔다.</strong> server.py는 live 요청에 <code>max_output_tokens: 300</code>을 넣어 수업 범위를 넘는 긴 생성을 제한한다.<br />토큰 수는 글자 수와 정확히 같지 않으며, 이 값은 최대 출력량을 제한하는 안전장치이다.</li>
+        <li><strong>서버는 외부 오류 원문을 숨긴다.</strong> 브라우저에는 재시도 가능한 한국어 안내만 반환한다.<br />외부 응답 전체에는 운영 정보가 포함될 수 있으므로 그대로 중계하지 않는다.</li>
+      </ul>
+      <p><a href="https://platform.openai.com/docs/quickstart">OpenAI 공식 개발자 빠른 시작</a>에서 서버 측 API 요청 흐름을 확인할 수 있다.<br /><a href="https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety">API 키 안전 지침</a>에 따라 키를 브라우저 코드나 저장소에 포함하지 않는다.</p>
+    </section>
+
+    <nav class="lesson-pagination" aria-label="차시 이동"><a href="../06_weather_api/index.html">이전: OpenWeather API</a></nav>
+  </main>
+</body>
+</html>

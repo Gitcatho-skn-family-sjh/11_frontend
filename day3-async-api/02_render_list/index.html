@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 3 · 02 · 검색 가능한 서비스 표 만들기</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../../assets/lesson.css" />
+    <link rel="stylesheet" href="../../assets/day1.css" />
+    <link rel="stylesheet" href="../async.css" />
+    <script src="../../assets/js-nav.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day3">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치">
+        <span>Day 3</span><span>02</span><span>배열 · DOM · 이벤트</span>
+      </nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT · TABLE RENDERING</p>
+        <h1>배열을 검색 가능한 서비스 표로 그리기</h1>
+        <p class="lesson-lead">
+          객체 배열을 tbody의 여러 행으로 변환한다.<br />검색과 상태 선택으로
+          배열을 걸러 내고, 행 안의 버튼으로 선택한 서비스의 상세 내용을
+          표시한다.
+        </p>
+        <div class="lesson-meta">
+          <span>tbody · tr · td</span><span>filter</span
+          ><span>input · change</span><span>dataset</span><span>closest</span
+          ><span>이벤트 위임</span>
+        </div>
+      </header>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">ARRAY → TABLE</p>
+          <h2>객체 하나를 표의 한 행으로 변환한다</h2>
+        </div>
+        <p>
+          표 제목은 HTML에 고정하고, 데이터가 들어가는 tbody만 JavaScript로 다시
+          그린다.<br />renderTable은 화면에 표시할 배열을 입력받아 기존 행을
+          지운 뒤 객체 수만큼 tr을 만든다.
+        </p>
+        <ol class="lesson-points">
+          <li>
+            <strong>초기화:</strong> <code>replaceChildren()</code>으로 이전
+            검색 결과를 제거한다.<br />다시 렌더링할 때 행이 계속 누적되는
+            문제를 막는다.
+          </li>
+          <li>
+            <strong>반복 변환:</strong> forEach의 service 객체 하나를 tr 하나로
+            만든다.<br />객체 속성 name, category, status, updatedAt은 각각 td의
+            textContent가 된다.
+          </li>
+          <li>
+            <strong>행 동작:</strong> 상세 버튼의 <code>data-id</code>에 객체의
+            id를 기록한다.<br />나중에 어느 버튼을 눌렀는지 id로 원본 객체를
+            찾을 수 있다.
+          </li>
+          <li>
+            <strong>0건 처리:</strong> 필터 결과가 빈 배열이면 colspan이 5인
+            안내 셀을 만든다.<br />빈 화면만 보여 주지 않고 결과가 없다는 상태를
+            명확히 전달한다.
+          </li>
+        </ol>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE 1</p>
+          <h2>tbody에 데이터 행과 빈 결과 행을 렌더링한다</h2>
+        </div>
+        <div class="code-panel">
+          <div class="code-panel-header">
+            <span>배열 한 건 → tr 한 개</span><span>JavaScript</span>
+          </div>
+          <pre><code>function renderTable(items) {
+  // ***** TODO 1. 이전 행을 지우고 검색 결과 건수 표시하기 *****
+  tableBody.replaceChildren();
+  resultCount.textContent = "검색 결과 " + items.length + "건";
+  // **************************************************************
+
+  if (items.length === 0) {
+    // ***** TODO 2. 검색 결과가 없다는 한 칸짜리 행 만들기 *****
+    const emptyRow = document.createElement("tr");
+    const emptyCell = document.createElement("td");
+    emptyCell.colSpan = 5;
+    emptyCell.textContent = "조건에 맞는 서비스가 없다.";
+    emptyRow.append(emptyCell);
+    tableBody.append(emptyRow);
+    // **************************************************************
+    return;
+  }
+
+  items.forEach(function (service) {
+    let row = null;
+    let nameCell = null;
+    let categoryCell = null;
+    let statusCell = null;
+    let updatedCell = null;
+    let actionCell = null;
+    let detailButton = null;
+
+    // ***** TODO 3. 서비스 한 건을 표시할 tr·td·button 요소 만들기 *****
+    row = document.createElement("tr");
+    nameCell = document.createElement("td");
+    categoryCell = document.createElement("td");
+    statusCell = document.createElement("td");
+    updatedCell = document.createElement("td");
+    actionCell = document.createElement("td");
+    detailButton = document.createElement("button");
+    // **************************************************************
+
+    // ***** TODO 4. 셀 내용과 버튼의 data-id를 설정한 뒤 행을 tbody에 붙이기 *****
+    nameCell.textContent = service.name;
+    categoryCell.textContent = service.category;
+    statusCell.textContent = service.status;
+    updatedCell.textContent = service.updatedAt;
+    detailButton.textContent = "상세 보기";
+    detailButton.type = "button";
+    detailButton.dataset.id = String(service.id);
+    actionCell.append(detailButton);
+    row.append(nameCell, categoryCell, statusCell, updatedCell, actionCell);
+    tableBody.append(row);
+    // **************************************************************
+  });
+}</code></pre>
+        </div>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EVENT DELEGATION</p>
+          <h2>검색 조건과 표의 클릭을 하나의 데이터 흐름으로 연결한다</h2>
+        </div>
+        <ul class="lesson-points">
+          <li>
+            <strong>input 이벤트:</strong> 검색 칸의 글자가 바뀔 때마다
+            실행된다.<br />버튼을 따로 누르지 않아도 입력 중인 검색어가 즉시
+            표에 반영된다.
+          </li>
+          <li>
+            <strong>change 이벤트:</strong> select의 선택값이 확정될 때
+            실행된다.<br />검색어와 상태 조건을 동시에 만족하는 객체만 filter가
+            반환한다.
+          </li>
+          <li>
+            <strong>이벤트 위임:</strong> 매번 새로 만드는 모든 버튼에 이벤트를
+            붙이지 않고 tbody 하나가 click을 받는다.<br /><code
+              >closest("button[data-id]")</code
+            >로 실제 클릭한 위치에서 가장 가까운 상세 버튼을 찾는다.
+          </li>
+          <li>
+            <strong>상세 선택:</strong> 버튼의 dataset.id를 숫자로 바꾼 뒤
+            find로 원본 객체를 찾는다.<br />찾은 객체의 속성을 상세 패널의
+            textContent에 나누어 표시한다.
+          </li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE 2</p>
+          <h2>검색·상태 필터와 상세 보기 이벤트를 구현한다</h2>
+        </div>
+        <div class="code-panel">
+          <div class="code-panel-header">
+            <span>이벤트 → filter/find → 다시 렌더링</span
+            ><span>JavaScript</span>
+          </div>
+          <pre><code>function applyFilters() {
+  let filteredServices = services;
+  // ***** TODO 5. 검색어와 상태 조건에 맞는 서비스만 filter로 고르기 *****
+  const query = searchInput.value.trim().toLowerCase();
+  const selectedStatus = statusSelect.value;
+  filteredServices = services.filter(function (service) {
+    const matchesQuery = service.name.toLowerCase().includes(query)
+      || service.category.toLowerCase().includes(query);
+    const matchesStatus = selectedStatus === "전체"
+      || service.status === selectedStatus;
+    return matchesQuery &amp;&amp; matchesStatus;
+  });
+  // **************************************************************
+  renderTable(filteredServices);
+}
+
+function showServiceDetail(event) {
+  let detailButton = null;
+  // ***** TODO 6. 실제 클릭 지점에서 가장 가까운 data-id 버튼 찾기 *****
+  detailButton = event.target.closest("button[data-id]");
+  // **************************************************************
+  if (!detailButton || !tableBody.contains(detailButton)) return;
+
+  const serviceId = Number(detailButton.dataset.id);
+  const selectedService = services.find(function (service) {
+    return service.id === serviceId;
+  });
+  if (!selectedService) return;
+
+  // ***** TODO 7. 찾은 객체의 내용을 상세 패널에 표시하기 *****
+  detailTitle.textContent = selectedService.name;
+  detailMeta.textContent = selectedService.category + " · "
+    + selectedService.status + " · 최근 변경 " + selectedService.updatedAt;
+  detailDescription.textContent = selectedService.description;
+  // **************************************************************
+}
+
+// ***** TODO 8. input·change·tbody click 이벤트 등록하기 *****
+searchInput.addEventListener("input", applyFilters);
+statusSelect.addEventListener("change", applyFilters);
+tableBody.addEventListener("click", showServiceDetail);
+// **************************************************************</code></pre>
+        </div>
+        <div class="demo-surface">
+          <div class="table-tools">
+            <div>
+              <label for="service-search">서비스 검색</label
+              ><input
+                id="service-search"
+                type="search"
+                placeholder="이름 또는 분류 입력"
+                autocomplete="off"
+              />
+            </div>
+            <div>
+              <label for="status-filter">운영 상태</label
+              ><select id="status-filter">
+                <option value="전체">전체</option>
+                <option value="운영 중">운영 중</option>
+                <option value="점검 중">점검 중</option>
+                <option value="중지">중지</option>
+              </select>
+            </div>
+          </div>
+          <p id="result-count" aria-live="polite">
+            검색 결과를 계산하는 중이다.
+          </p>
+          <div
+            class="day1-table-scroll"
+            role="region"
+            aria-label="서비스 검색 결과"
+            tabindex="0"
+          >
+            <table class="service-table">
+              <thead>
+                <tr>
+                  <th>서비스</th>
+                  <th>분류</th>
+                  <th>상태</th>
+                  <th>최근 변경</th>
+                  <th>동작</th>
+                </tr>
+              </thead>
+              <tbody id="service-table-body">
+                <tr>
+                  <td colspan="5">표시 준비 중이다.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <article class="detail-panel" aria-live="polite">
+            <h3 id="detail-title">서비스를 선택한다</h3>
+            <p id="detail-meta">
+              표의 상세 보기 버튼을 누르면 상태가 표시된다.
+            </p>
+            <p id="detail-description">설명이 이 영역에 표시된다.</p>
+          </article>
+        </div>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="주제 이동">
+        <a href="../01_create_append/index.html"
+          >이전: 서비스 카드 만들고 삭제하기</a
+        >
+        <a href="../03_async_await/index.html">다음: 비동기와 await</a>
+      </nav>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AJAX와 Fetch로 화면 일부 바꾸기</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../../assets/lesson.css" />
+    <link rel="stylesheet" href="../../assets/day1.css" />
+    <link rel="stylesheet" href="../async.css" />
+    <script src="../../assets/js-nav.js" defer></script>
+    <script src="../provided.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day3">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치">
+        <span>Day 3</span><span>DOM · 이벤트 · 비동기 요청</span>
+      </nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">DAY 3 · FETCH 04</p>
+        <h1>AJAX와 Fetch로 필요한 부분만 바꾸기</h1>
+        <p class="lesson-lead">
+          페이지 전체를 새로 열지 않고 서버에서 필요한 데이터만 받는다.<br />텍스트와
+          JSON을 각각 읽어 문단과 표로 출력한다.
+        </p>
+      </header>
+
+      <section class="lesson-section" id="ajax">
+        <div class="section-heading">
+          <p class="section-kicker">AJAX</p>
+          <h2>AJAX는 페이지 일부를 갱신하는 웹 개발 기법이다</h2>
+        </div>
+        <p>
+          AJAX(Asynchronous JavaScript and XML)는
+          <strong>전체 페이지 새로고침 없이</strong> 비동기 HTTP 요청으로 필요한
+          데이터만 받고, JavaScript로 DOM 일부를 바꾸는 기법이다.<br />이름에는
+          XML이 있지만 현재는 다루기 쉬운 JSON을 자주 사용한다.
+        </p>
+        <ul class="lesson-points">
+          <li>
+            <strong>AJAX는 상위 개념이다.</strong> 사용자가 검색 버튼을 누른 뒤
+            현재 화면을 유지한 채 결과 영역만 바꾸는 동작 전체를 뜻한다.<br />특정
+            함수나 라이브러리 하나의 이름이 아니다.
+          </li>
+          <li>
+            <strong>Fetch는 AJAX를 구현하는 현대 브라우저 API이다.</strong> 별도
+            설치 없이 <code>fetch()</code>로 HTTP 요청을 보낼 수 있다.<br />응답은
+            Promise로 오므로 앞 단원에서 배운 await를 사용한다.
+          </li>
+          <li>
+            <strong>DOM 갱신까지 연결해야 화면에 보인다.</strong> 데이터를
+            받기만 해서는 페이지가 바뀌지 않는다.<br /><code>textContent</code>,
+            <code>createElement</code>, <code>append</code>로 원하는 영역을
+            갱신한다.
+          </li>
+        </ul>
+      </section>
+
+      <section class="lesson-section" id="response">
+        <div class="section-heading">
+          <p class="section-kicker">FETCH FLOW</p>
+          <h2>요청부터 DOM까지 네 단계로 읽기</h2>
+        </div>
+        <ul class="process-list">
+          <li>
+            <strong><code>fetch(url)</code></strong
+            ><br />기본값인 GET 방식으로 주소에 요청한다.
+          </li>
+          <li>
+            <strong><code>Response</code>와 <code>response.ok</code></strong
+            ><br />응답 상태를 받고 HTTP 성공 여부를 검사한다.
+          </li>
+          <li>
+            <strong
+              ><code>response.text()</code> 또는
+              <code>response.json()</code></strong
+            ><br />본문을 목적에 맞는 방식으로 한 번만 읽는다.
+          </li>
+          <li>
+            <strong>DOM 출력</strong><br />읽은 문자열이나 객체 배열로 현재
+            페이지의 일부를 바꾼다.
+          </li>
+        </ul>
+        <pre><code>const response = await fetch(lessonApiUrl("/api/demo/json"));
+
+if (!response.ok) {
+  throw new Error(`HTTP ${response.status}`);
+}
+
+const data = await response.json();
+renderDemoRows(tableBody, data);</code></pre>
+        <div class="callout is-warning">
+          <h3>404도 Response를 받을 수 있다</h3>
+          <p>
+            <code>fetch()</code>는 서버가 404 응답을 보내도 Response 객체를
+            정상적으로 반환한다.<br />그래서 <code>response.ok</code>를 직접
+            검사해 오류 처리 흐름으로 보내야 한다.
+          </p>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="body">
+        <div class="section-heading">
+          <p class="section-kicker">TEXT / JSON</p>
+          <h2>본문은 사용할 형태를 정한 뒤 한 번 읽는다</h2>
+        </div>
+        <div class="compare-grid">
+          <article class="concept-card">
+            <h3><code>response.text()</code></h3>
+            <p>응답 본문을 하나의 문자열로 받는다.</p>
+            <p>
+              안내 문장, CSV 원문, HTML 원문처럼 텍스트 그대로 사용할 때
+              적합하다.
+            </p>
+          </article>
+          <article class="concept-card">
+            <h3><code>response.json()</code></h3>
+            <p>JSON 텍스트를 JavaScript 객체나 배열로 해석한다.</p>
+            <p>속성을 읽고 반복하여 표나 카드로 만들 때 적합하다.</p>
+          </article>
+        </div>
+        <p>
+          같은 Response에서 <code>text()</code>를 호출한 뒤 다시
+          <code>json()</code>을 호출하지 않는다.<br />응답 본문 스트림은 한 번
+          읽으면 소비되므로 필요한 방식 하나를 선택한다.
+        </p>
+      </section>
+
+      <section class="lesson-section" id="server">
+        <div class="section-heading">
+          <p class="section-kicker">LOCAL SERVER</p>
+          <h2>Live Server의 페이지에서 Python API 서버로 요청하기</h2>
+        </div>
+        <p>
+          <code>fetch()</code>는 브라우저에서 실행되지만 요청을 받고 응답을
+          보내는 프로그램도 필요하다.<br />HTML·CSS·JavaScript는 VS Code Live
+          Server가 5500 포트로 열고, <code>server.py</code>는 8001 포트에서
+          실습용 API 응답을 돌려준다.
+        </p>
+
+        <div class="concept-grid server-overview">
+          <article class="concept-card">
+            <h3>
+              Django·FastAPI·Flask나 별도 pip 패키지를 사용한 서버가 아니다.
+            </h3>
+            <p>Python 3의 <code>http.server</code>를 중심으로 구현했다.</p>
+            <p>
+              <code>ThreadingHTTPServer</code>가 요청을 받고,
+              <code>SimpleHTTPRequestHandler</code>가 정적 파일을 전달하며,
+              <code>json</code>과 <code>urllib</code>가 JSON 처리와 선택적인
+              외부 요청을 담당한다.
+            </p>
+            <p></p>
+          </article>
+          <article class="concept-card">
+            <h3>포트가 다르면 서로 다른 출처이다.</h3>
+            <p>
+              <code>http://127.0.0.1:5500</code>과
+              <code>http://127.0.0.1:8001</code>은 포트가 달라 브라우저가
+              교차 출처 요청으로 판단한다.
+            </p>
+            <p>
+              <code>server.py</code>는 Live Server의 두 주소만 CORS로 허용하고,
+              JSON POST 전에 오는 <code>OPTIONS</code> 사전 요청도 처리한다.
+            </p>
+          </article>
+        </div>
+
+        <h3>실행, 종료 방법</h3>
+        <ul class="process-list">
+          <li>
+            <strong>터미널 위치를 확인한다.</strong><br />편집기에서 배포받은
+            <code>day3-async-api</code> 폴더를 터미널로 연다.
+          </li>
+          <li>
+            <strong>로컬 서버를 시작한다.</strong><br />아래 명령을 실행한다.
+            Python 3만 필요하며 npm·pip 설치는 필요하지 않다.
+            <div class="code-panel">
+              <div class="code-panel-header">
+                <span>day3-async-api 폴더의 터미널</span><span>Python</span>
+              </div>
+              <pre><code>python3 server.py --port 8001</code></pre>
+            </div>
+          </li>
+          <li>
+            <strong>HTML은 Live Server로 연다.</strong><br />VS Code에서
+            <code>index.html</code>을 우클릭해 <code>Open with Live Server</code>를
+            선택하고 주소가 <code>http://127.0.0.1:5500</code> 또는
+            <code>http://localhost:5500</code>으로 시작하는지 확인한다.
+          </li>
+          <li>
+            <strong>실습이 끝나면 종료한다.</strong><br />서버를 실행한
+            터미널에서 <code>Ctrl+C</code>를 누른다.
+          </li>
+        </ul>
+
+        <div class="callout is-tip">
+          <h3>두 서버의 역할을 구분한다</h3>
+          <p>
+            Live Server 5500은 HTML·CSS·JavaScript 파일을 전달한다.<br />Python
+            서버 8001은 <code>/api/...</code> 요청을 받고 text 또는 JSON을
+            반환한다. 제공 함수 <code>lessonApiUrl()</code>이 상대 API 경로 앞에
+            8001 서버 주소를 붙인다.
+          </p>
+        </div>
+
+        <ul class="lesson-points">
+          <li>
+            <strong><code>/api/demo/text</code></strong
+            >는 짧은 일반 텍스트를 응답한다.<br /><code>response.text()</code>로
+            읽어 하나의 문단에 출력한다.
+          </li>
+          <li>
+            <strong><code>/api/demo/json</code></strong
+            >은 객체 배열이 담긴 JSON을 응답한다.<br /><code
+              >response.json()</code
+            >으로 읽어 여러 표 행을 만든다.
+          </li>
+          <li>
+            <strong><code>/api/demo/missing</code></strong
+            >은 존재하지 않아 404를 응답한다.<br /><code>response.ok</code>
+            검사가 왜 필요한지 관찰한다.
+          </li>
+        </ul>
+        <p>
+          <a href="https://developer.mozilla.org/ko/docs/Glossary/AJAX"
+            >MDN: AJAX</a
+          >와
+          <a
+            href="https://developer.mozilla.org/ko/docs/Web/API/Fetch_API/Using_Fetch"
+            >MDN: Fetch 사용하기</a
+          >에서 같은 흐름을 확인할 수 있다.
+        </p>
+      </section>
+
+      <section class="lesson-section" id="demo">
+        <div class="section-heading">
+          <p class="section-kicker">CODE &amp; DEMO</p>
+          <h2>Text와 JSON 응답을 서로 다른 DOM으로 출력하기</h2>
+        </div>
+        <pre><code>async function loadResource(endpoint, format) {
+  const response = await fetch(endpoint);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const data =
+    format === "text"
+      ? await response.text()
+      : await response.json();
+}
+
+jsonButton.addEventListener("click", function () {
+  loadResource(lessonApiUrl("/api/demo/json"), "json");
+});</code></pre>
+        <div class="demo-surface">
+          <div class="async-controls">
+            <button id="fetch-text" type="button">Text 응답 요청</button>
+            <button id="fetch-json" type="button">JSON 응답 요청</button>
+            <button id="fetch-missing" type="button">404 응답 관찰</button>
+          </div>
+          <p
+            id="fetch-status"
+            class="async-status"
+            data-state="idle"
+            role="status"
+            aria-live="polite"
+          >
+            요청 전이다.
+          </p>
+          <ul class="process-list" aria-label="현재 요청 단계">
+            <li data-fetch-step="1">fetch 요청 전이다.</li>
+            <li data-fetch-step="2">Response 확인 전이다.</li>
+            <li data-fetch-step="3">본문 읽기 전이다.</li>
+            <li data-fetch-step="4">DOM 출력 전이다.</li>
+          </ul>
+          <h3>Text 출력</h3>
+          <p id="text-output" class="callout">아직 받은 텍스트가 없다.</p>
+          <h3>JSON 배열을 표로 출력</h3>
+          <div class="day1-table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">제목</th>
+                  <th scope="col">분류</th>
+                </tr>
+              </thead>
+              <tbody id="json-output"></tbody>
+            </table>
+          </div>
+        </div>
+        <p>
+          각 버튼을 누른 뒤 개발자 도구의 Network 탭에서도 요청 주소, 상태 코드,
+          응답 본문을 확인한다.<br />화면의 네 단계가 실제 네트워크 정보와
+          어떻게 연결되는지 비교한다.
+        </p>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="차시 이동">
+        <a href="../03_async_await/index.html">이전: async와 await</a>
+        <a href="../05_form_api/index.html">다음: 검색 폼과 API</a>
+      </nav>
+    </main>
+  </body>
+</html>

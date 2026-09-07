@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 3 · 01 · 서비스 카드 만들고 삭제하기</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../../assets/lesson.css" />
+    <link rel="stylesheet" href="../../assets/day1.css" />
+    <link rel="stylesheet" href="../async.css" />
+    <script src="../../assets/js-nav.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day3">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치"><span>Day 3</span><span>01</span><span>JavaScript · DOM</span></nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT · CREATE &amp; APPEND</p>
+        <h1>폼 입력값으로 서비스 카드 만들고 삭제하기</h1>
+        <p class="lesson-lead">입력값 세 개를 읽어 하나의 카드 구조로 바꾸고, 삭제 버튼의 클릭 이벤트로 다시 제거한다.<br />요소 생성·내용 설정·부모 자식 연결·이벤트 처리로 이어지는 DOM 작업의 전체 흐름을 확인한다.</p>
+        <div class="lesson-meta"><span>submit</span><span>createElement</span><span>textContent</span><span>classList</span><span>dataset</span><span>append</span><span>click</span><span>remove</span></div>
+      </header>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">DATA → DOM TREE</p><h2>문자열 세 개가 동작하는 카드 한 장이 되는 과정</h2></div>
+        <p>폼을 제출하면 이름·분류·설명은 문자열로 읽힌다.<br />JavaScript는 필요한 요소 객체를 각각 만들어 DOM 트리로 연결하고, 버튼에는 현재 카드를 삭제하는 동작을 등록한다.</p>
+        <ol class="lesson-points">
+          <li><strong>입력:</strong> input, select, textarea의 <code>value</code>를 읽고 앞뒤 공백을 제거한다.<br />이름이나 설명이 비어 있으면 카드를 만들지 않고 입력 위치로 포커스를 돌린다.</li>
+          <li><strong>생성:</strong> <code>article</code>, <code>h3</code>, <code>p</code>, <code>span</code>, <code>button</code>을 각각 만든다.<br />createElement 직후의 요소는 메모리에만 존재하며 아직 화면에는 나타나지 않는다.</li>
+          <li><strong>설정:</strong> 사용자 입력은 <code>textContent</code>로 넣고, 꾸밈은 <code>classList</code>, 식별 정보는 <code>dataset</code>으로 설정한다.<br />표시할 내용과 프로그램이 사용할 정보를 서로 다른 속성에 보관한다.</li>
+          <li><strong>연결:</strong> 작은 요소를 article에 붙인 다음 완성된 article을 목록에 붙인다.<br />마지막 append가 실행되어야 카드가 현재 문서의 DOM 트리에 들어간다.</li>
+          <li><strong>동작:</strong> 삭제 버튼에서 click 이벤트가 발생하면 <code>card.remove()</code>를 실행한다.<br />remove는 해당 요소와 그 안의 모든 자식 요소를 DOM 트리에서 함께 제거한다.</li>
+        </ol>
+        <pre><code>section#service-list
+└─ article.service-card  data-service-id="1"
+   ├─ span.service-badge
+   ├─ h3
+   ├─ p
+   └─ button             data-action="delete"</code></pre>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">SAFE TEXT &amp; METADATA</p><h2>보이는 글자와 동작에 필요한 데이터를 구분한다</h2></div>
+        <ul class="lesson-points">
+          <li><strong>textContent:</strong> 사용자 입력을 HTML이 아닌 글자로 표시한다.<br /><code>&lt;img&gt;</code>처럼 생긴 값을 입력해도 새 태그로 해석되지 않는다.</li>
+          <li><strong>classList:</strong> CSS가 찾을 class를 추가한다.<br />내용과 스타일의 역할을 분리할 수 있다.</li>
+          <li><strong>dataset:</strong> <code>data-service-id="1"</code>은 JavaScript에서 <code>element.dataset.serviceId</code>로 읽는다.<br />요소가 어떤 데이터를 가리키는지 기록할 때 사용한다.</li>
+          <li><strong>append:</strong> 여러 자식을 쉼표로 전달하면 순서대로 부모의 마지막에 붙는다.<br />배지 → 제목 → 설명 → 삭제 버튼 순서가 화면 순서가 된다.</li>
+          <li><strong>remove:</strong> 삭제할 요소에서 호출하면 그 요소를 DOM 트리에서 꺼낸다.<br />화면에서 사라진 카드는 더 이상 문서의 요소로 선택되지 않는다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>완성 코드를 따라 서비스 카드 생성·삭제 흐름을 연결한다</h2></div>
+        <div class="code-panel"><div class="code-panel-header"><span>입력 → 검증 → 생성 → 설정 → 연결 → 이벤트</span><span>JavaScript</span></div><pre><code>const serviceForm = document.querySelector("#service-form");
+const serviceNameInput = document.querySelector("#service-name");
+const serviceCategorySelect = document.querySelector("#service-category");
+const serviceDescriptionInput = document.querySelector("#service-description");
+const serviceList = document.querySelector("#service-list");
+const serviceMessage = document.querySelector("#service-message");
+let nextServiceId = 1;
+
+function addServiceCard(event) {
+  let serviceName = "";
+  let category = "";
+  let description = "";
+
+  // ***** TODO 1. 기본 제출을 막고 폼 입력값 세 개 읽기 *****
+  event.preventDefault();
+  serviceName = serviceNameInput.value.trim();
+  category = serviceCategorySelect.value;
+  description = serviceDescriptionInput.value.trim();
+  // **************************************************************
+
+  if (serviceName === "" || description === "") {
+    serviceMessage.textContent = "서비스 이름과 설명을 모두 입력한다.";
+    (serviceName === "" ? serviceNameInput : serviceDescriptionInput).focus();
+    return;
+  }
+
+  let card = null;
+  let badge = null;
+  let title = null;
+  let descriptionText = null;
+  let deleteButton = null;
+
+  // ***** TODO 2. 카드에 필요한 다섯 요소 만들기 *****
+  card = document.createElement("article");
+  badge = document.createElement("span");
+  title = document.createElement("h3");
+  descriptionText = document.createElement("p");
+  deleteButton = document.createElement("button");
+  // **************************************************************
+
+  if (!card || !badge || !title || !descriptionText || !deleteButton) return;
+
+  // ***** TODO 3. 사용자 입력을 각 요소의 textContent에 넣기 *****
+  badge.textContent = category;
+  title.textContent = serviceName;
+  descriptionText.textContent = description;
+  deleteButton.textContent = "카드 삭제";
+  // **************************************************************
+
+  // ***** TODO 4. class와 data 속성으로 요소의 역할 기록하기 *****
+  card.classList.add("service-card");
+  badge.classList.add("service-badge");
+  card.dataset.serviceId = String(nextServiceId);
+  deleteButton.classList.add("service-delete-button");
+  deleteButton.dataset.action = "delete";
+  deleteButton.type = "button";
+  // **************************************************************
+
+  // ***** TODO 5. 자식 요소를 카드에 붙이고 카드를 목록에 붙이기 *****
+  card.append(badge, title, descriptionText, deleteButton);
+  serviceList.append(card);
+  // **************************************************************
+
+  // ***** TODO 6. 삭제 버튼을 누르면 현재 카드 제거하기 *****
+  deleteButton.addEventListener("click", function () {
+    card.remove();
+    serviceMessage.textContent = serviceName + " 카드를 삭제했다.";
+    serviceNameInput.focus();
+  });
+  // **************************************************************
+
+  nextServiceId += 1;
+  serviceForm.reset();
+  serviceMessage.textContent = serviceName + " 카드를 추가했다.";
+  serviceNameInput.focus();
+}
+
+// ***** TODO 7. form의 submit 이벤트에 addServiceCard 함수 등록하기 *****
+serviceForm.addEventListener("submit", addServiceCard);
+// **************************************************************</code></pre></div>
+        <div class="demo-surface">
+          <form id="service-form" class="service-form">
+            <div><label for="service-name">서비스 이름</label><input id="service-name" name="serviceName" type="text" autocomplete="off" placeholder="예: 회의록 요약기" /></div>
+            <div><label for="service-category">분류</label><select id="service-category" name="category"><option value="업무">업무</option><option value="생활">생활</option><option value="콘텐츠">콘텐츠</option></select></div>
+            <div><label for="service-description">한 줄 설명</label><textarea id="service-description" name="description" rows="3" placeholder="어떤 문제를 해결하는지 적는다."></textarea></div>
+            <button type="submit">서비스 카드 추가</button>
+          </form>
+          <p id="service-message" aria-live="polite">폼을 제출하면 아래에 카드가 추가된다.</p>
+          <section id="service-list" class="service-list" aria-label="등록한 서비스"></section>
+        </div>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="주제 이동">
+        <a href="../00_form_submit/index.html">이전: 폼 제출과 입력 검증</a>
+        <a href="../02_render_list/index.html">다음: 배열을 검색 가능한 표로 그리기</a>
+      </nav>
+    </main>
+  </body>
+</html>

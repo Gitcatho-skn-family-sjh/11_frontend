@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Promise와 async/await를 눈으로 비교하기</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="../../assets/lesson.css" />
+  <link rel="stylesheet" href="../../assets/day1.css" />
+  <link rel="stylesheet" href="../async.css" />
+  <script src="../../assets/js-nav.js" defer></script>
+  <script src="../provided.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="lesson-page has-day1-sidebar" data-lesson-track="day3">
+  <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+  <main id="lesson-content" class="lesson-shell">
+    <nav class="lesson-breadcrumb" aria-label="현재 위치"><span>Day 3</span><span>DOM · 이벤트 · 비동기 요청</span></nav>
+    <header class="lesson-hero">
+      <p class="lesson-kicker">DAY 3 · ASYNC 03</p>
+      <h1>Promise와 완료된 값을 눈으로 비교하기</h1>
+      <p class="lesson-lead">일반 값, 아직 처리 중인 Promise, await 뒤의 완료 값을 한 화면에서 비교한다.<br />문법을 외우기 전에 어떤 값이 언제 생기는지 확인한다.</p>
+    </header>
+
+    <section class="lesson-section" id="value">
+      <div class="section-heading"><p class="section-kicker">VALUE</p><h2>바로 받는 값과 나중에 받는 값은 다르다</h2></div>
+      <p>일반 계산은 호출한 자리에서 결과를 바로 사용할 수 있다.<br />서버 요청처럼 시간이 필요한 작업은 지금 결과 대신 <strong>나중 결과를 담을 약속 객체</strong>를 먼저 돌려준다.</p>
+      <div class="compare-grid">
+        <article class="concept-card"><h3>일반 값</h3><p><code>const value = "완료";</code></p><p>다음 줄에서 바로 문자열을 읽을 수 있다.</p></article>
+        <article class="concept-card"><h3>Promise 객체</h3><p><code>const promise = requestMessage();</code></p><p>호출 직후에는 결과 문자열이 아니라 Promise를 받는다.</p></article>
+      </div>
+      <pre><code>const directValue = "바로 받은 문자열";
+const promise = requestMessage(false);
+
+console.log(directValue); // 바로 받은 문자열
+console.log(promise);     // Promise 객체</code></pre>
+    </section>
+
+    <section class="lesson-section" id="promise">
+      <div class="section-heading"><p class="section-kicker">PROMISE</p><h2>Promise는 비동기 결과의 진행 상태를 표현한다</h2></div>
+      <ul class="lesson-points">
+        <li><strong>pending은 기다리는 중이다.</strong> 성공 값과 실패 이유가 아직 정해지지 않은 상태이다.<br />이 상태의 Promise 자체를 문자열처럼 사용할 수는 없다.</li>
+        <li><strong>fulfilled는 성공한 상태이다.</strong> 작업이 끝나 결과 값을 받을 수 있다.<br />이번 제공 함수는 성공하면 문자열을 결과로 전달한다.</li>
+        <li><strong>rejected는 실패한 상태이다.</strong> 정상 값 대신 오류 이유가 정해진다.<br />네트워크 실패뿐 아니라 우리가 만든 오류도 이 경로로 처리할 수 있다.</li>
+      </ul>
+      <p><code>requestMessage()</code> 안의 Promise 생성 코드는 제공되어 있다.<br />학생은 Promise를 직접 만드는 것보다 이미 반환된 Promise의 결과를 사용하는 연습에 집중한다.</p>
+    </section>
+
+    <section class="lesson-section" id="async-await">
+      <div class="section-heading"><p class="section-kicker">ASYNC / AWAIT</p><h2>await는 현재 async 함수의 다음 줄만 기다린다</h2></div>
+      <pre><code>async function readMessage() {
+  const message = await requestMessage(false);
+  console.log(message);
+}
+
+const returnedValue = readMessage();
+console.log(returnedValue instanceof Promise); // true</code></pre>
+      <ul class="lesson-points">
+        <li><strong><code>async</code>는 함수 안에서 await를 사용할 수 있게 한다.</strong> async 함수가 문자열을 return해도 호출한 쪽에는 Promise가 돌아간다.<br />그래서 예제에서는 async 함수의 반환값도 Promise인지 확인한다.</li>
+        <li><strong><code>await</code>는 Promise가 끝날 때까지 현재 함수의 다음 줄을 미룬다.</strong> 성공하면 완료 값이 변수에 들어간다.<br />브라우저 전체를 멈추는 명령은 아니다.</li>
+        <li><strong>다른 이벤트는 계속 처리된다.</strong> 결과를 기다리는 동안 옆의 카운터 버튼을 누를 수 있다.<br />이 동작으로 화면 전체가 멈추지 않았음을 직접 확인한다.</li>
+      </ul>
+    </section>
+
+    <section class="lesson-section" id="demo">
+      <div class="section-heading"><p class="section-kicker">CODE &amp; DEMO</p><h2>일반 값 → Promise → await 결과를 차례로 출력하기</h2></div>
+      <pre><code>async function compareValues(shouldFail) {
+  const directValue = "바로 받은 문자열";
+  const promise = requestMessage(shouldFail);
+
+  try {
+    const message = await promise;
+    showValue(awaitedOutput, message);
+  } catch (error) {
+    showValue(awaitedOutput, error.message);
+  } finally {
+    runButton.disabled = false;
+  }
+}</code></pre>
+      <div class="demo-surface">
+        <div class="async-controls">
+          <div><label for="async-mode">약속된 결과</label><select id="async-mode"><option value="success">먼저 성공 확인</option><option value="error">그다음 실패 확인</option></select></div>
+          <button id="run-async" type="button">값 비교 실행</button>
+          <button id="count-click" type="button">기다리는 동안 클릭 <span id="click-count">0</span></button>
+        </div>
+        <div class="concept-grid" aria-live="polite">
+          <article class="concept-card"><h3>1. 일반 문자열</h3><p id="direct-output">실행 전이다.</p></article>
+          <article class="concept-card"><h3>2. 즉시 반환값</h3><p id="promise-output">실행 전이다.</p></article>
+          <article class="concept-card"><h3>3. await 이후</h3><p id="awaited-output">실행 전이다.</p></article>
+        </div>
+        <p>async 함수의 반환값도 Promise인가? <strong id="return-output">실행 전이다.</strong></p>
+        <ol id="async-log" class="demo-list async-log" aria-label="단계별 실행 로그"></ol>
+      </div>
+      <p>성공 모드에서 먼저 실행하고, 800ms 동안 카운터를 눌러 본다.<br />그다음 실패 모드로 바꾸면 await 지점의 오류가 catch로 이동하고 finally가 버튼을 복구한다.</p>
+    </section>
+
+    <section class="lesson-section" id="flow">
+      <div class="section-heading"><p class="section-kicker">ORDER</p><h2>화면에서 확인할 실행 순서</h2></div>
+      <ul class="process-list">
+        <li><strong>함수가 Promise를 바로 받는다.</strong><br />요청 결과 문자열은 아직 준비되지 않았다.</li>
+        <li><strong>함수 밖과 다른 이벤트가 계속 실행된다.</strong><br />카운터 버튼도 정상적으로 반응한다.</li>
+        <li><strong>Promise가 끝나면 await 다음 줄이 실행된다.</strong><br />성공 값 또는 실패 이유를 화면에 표시한다.</li>
+        <li><strong>finally가 공통 정리를 수행한다.</strong><br />성공 여부와 관계없이 실행 버튼을 복구한다.</li>
+      </ul>
+      <p><a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise">MDN: Promise</a>와 <a href="https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/async_function">MDN: async function</a>에서 같은 개념을 확인할 수 있다.</p>
+    </section>
+
+    <nav class="lesson-pagination" aria-label="차시 이동">
+      <a href="../02_render_list/index.html">이전: DOM 목록 갱신</a>
+      <a href="../04_fetch_json/index.html">다음: AJAX와 Fetch</a>
+    </nav>
+  </main>
+</body>
+</html>

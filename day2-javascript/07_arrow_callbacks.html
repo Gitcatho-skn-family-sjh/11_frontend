@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript 07 · 함수의 표현을 바꾸고 함수 값을 전달하기</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/js-nav.js" defer></script>
+    <script src="07_arrow_callbacks.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day2">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치"><span>Day 2</span><span>07</span><span>JavaScript</span></nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT 07</p>
+        <h1>함수의 표현을 바꾸고 함수 값을 전달하기</h1>
+        <p class="lesson-lead">같은 계산을 함수 선언·표현식·화살표 함수로 비교한다.<br />콜백은 다른 함수가 호출하도록 전달하는 함수 값이다.</p>
+      </header>
+      <p>이 페이지의 EXAMPLE은 <code>07_arrow_callbacks.js</code>의 연속된 구간이다.<br />브라우저 Console 또는 파일이 있는 폴더의 <code>node 07_arrow_callbacks.js</code> 명령으로 전체 실행 결과를 확인할 수 있다.</p>
+      <section class="lesson-section"><div class="section-heading"><p class="section-kicker">FUNCTION VALUE</p><h2>함수의 표현 방식과 함수가 하는 일은 구분한다</h2></div><p>함수 선언·함수 표현식·화살표 함수는 함수를 만드는 서로 다른 형태이다.<br />먼저 같은 곱셈을 여러 형태로 작성해 입력과 반환값이 어디에 있는지 비교한다.</p><ul class="lesson-points"><li><strong>함수 표현식부터 읽는다.</strong> <code>const 이름 = function (매개변수) { ... };</code>는 함수 값을 변수에 저장한다.<br />function 뒤의 함수 이름을 생략한 형태를 익명 함수라고 한다.</li>
+<li><strong>화살표 함수는 <code>=&gt;</code>로 경계를 표시한다.</strong> 화살표 왼쪽은 매개변수이고 오른쪽은 실행할 본문이다.<br />단순히 화살표가 있다고 바로 실행되는 것은 아니며, 괄호를 붙여 호출해야 실행한다.</li>
+<li><strong>함수는 다른 값처럼 전달할 수 있다.</strong> 숫자를 변수에 저장하고 인수로 전달하듯, 함수도 저장하고 전달한다.<br />다른 함수가 호출하도록 전달한 함수를 콜백이라고 부른다.</li></ul></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>이름 있는 함수 선언과 익명 함수 표현식 비교하기</h2></div><p>두 함수 모두 left와 right를 받아 곱한 값을 반환한다.<br />함수를 정의하는 형태가 달라도 이번 계산의 입력·처리·출력은 같다.</p><ul class="lesson-points"><li><strong>선언은 함수 이름을 function 뒤에 적는다.</strong> multiplyNamed라는 이름으로 함수를 정의하고 호출한다.<br />호출할 때 전달한 3과 4가 각각 left와 right에 대응한다.</li>
+<li><strong>표현식은 함수 값을 변수에 저장한다.</strong> 자체 이름 없는 함수를 만들어 multiplyExpression에 저장한다.<br />변수 이름 뒤에 괄호를 붙이면 저장한 함수가 실행된다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>07_arrow_callbacks.js</span><span>EXAMPLE</span></div><pre><code>function multiplyNamed(left, right) {
+  return left * right;
+}
+const multiplyExpression = function (left, right) {
+  return left * right;
+};
+console.log("함수 선언:", multiplyNamed(3, 4));
+console.log("익명 함수 표현식:", multiplyExpression(3, 4));</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">함수 선언: 12
+익명 함수 표현식: 12</pre></div><p>두 형태 모두 3과 4를 받아 12를 반환한다.<br />다음 예제에서는 같은 곱셈을 화살표 함수로 한 번 더 표현한다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>매개변수 0개·1개·2개인 화살표 함수 작성하기</h2></div><p>매개변수 개수에 따라 왼쪽 괄호 안의 내용이 달라진다.<br />한 문장의 계산값을 반환할 때는 중괄호와 return 없이 식을 바로 적을 수 있다.</p><ul class="lesson-points"><li><strong>매개변수가 0개이면 <code>()</code>가 필요하다.</strong> sayHello는 외부 인수를 받지 않고 정해진 문자열을 반환한다.<br />빈 괄호는 함수 호출 괄호와 다른 위치에 있으므로 정의와 호출을 구분한다.</li>
+<li><strong>매개변수가 1개이면 이름 하나를 적는다.</strong> <code>(number) =&gt; number * 2</code>는 number를 받아 두 배를 반환한다.<br />하나의 단순 매개변수에서는 <code>number =&gt; number * 2</code>처럼 괄호를 생략할 수도 있다.</li>
+<li><strong>매개변수가 2개 이상이면 괄호와 쉼표로 묶는다.</strong> <code>(left, right) =&gt; left * right</code>의 왼쪽이 입력 두 개이다.<br />이 식 전체가 함수 값이므로 multiplyArrow에 저장한 뒤 호출한다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>07_arrow_callbacks.js</span><span>EXAMPLE</span></div><pre><code>const sayHello = () =&gt; "안녕하세요";
+const double = (number) =&gt; number * 2;
+let multiplyArrow;
+// ***** TODO 1. 두 매개변수를 곱해 반환하는 화살표 함수 전체를 저장하기 *****
+multiplyArrow = (left, right) =&gt; left * right;
+// **************************************************************
+console.log("매개변수 0개:", sayHello());
+console.log("매개변수 1개:", double(4));
+if (typeof multiplyArrow === "function") {
+  console.log("매개변수 2개:", multiplyArrow(3, 4));
+} else {
+  console.log("두 매개변수 함수 값:", multiplyArrow);
+}</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">매개변수 0개: 안녕하세요
+매개변수 1개: 8
+매개변수 2개: 12</pre></div><p>0개 인수 함수는 인사 문장, 한 인수 함수는 8, 두 인수 곱셈 함수는 12를 반환한다.<br />곱셈에 사용한 함수 선언·표현식·화살표 함수는 이번 예제에서 모두 12를 만들었다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>식 본문과 블록 본문은 반환 방법이 다르다</h2></div><p>화살표 오른쪽에 식만 적으면 그 식의 값이 자동으로 반환된다.<br />중괄호로 여러 문장을 묶은 블록에서는 돌려줄 값 앞에 return을 직접 작성한다.</p><ul class="lesson-points"><li><strong>식 본문은 계산한 값 하나를 반환한다.</strong> squareExpression은 5 × 5의 결과 25를 반환한다.<br />짧은 계산이나 변환에 어울리지만 여러 문장을 나열할 수는 없다.</li>
+<li><strong>블록 본문은 필요한 처리를 문장으로 나눈다.</strong> squareBlock은 지역 변수 result에 계산값을 저장한 뒤 반환한다.<br />중괄호의 마지막 줄이라고 자동으로 반환되는 것은 아니다.</li>
+<li><strong>계산만 하고 반환하지 않으면 undefined이다.</strong> squareWithoutReturn은 곱셈식을 계산하지만 결과를 돌려주지 않는다.<br />에러가 난 것은 아니지만, 호출자가 숫자를 기대했다면 반환문이 빠졌는지 확인해야 한다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>07_arrow_callbacks.js</span><span>EXAMPLE</span></div><pre><code>const squareExpression = (number) =&gt; number * number;
+const squareBlock = (number) =&gt; {
+  const result = number * number;
+  // ***** TODO 2. 블록 형태의 화살표 함수에서 result 반환하기 *****
+  return result;
+  // **************************************************************
+};
+const squareWithoutReturn = (number) =&gt; {
+  number * number;
+};
+console.log("식의 자동 반환:", squareExpression(5));
+console.log("블록의 명시적 반환:", squareBlock(5));
+console.log("return 없는 블록:", squareWithoutReturn(5));</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">식의 자동 반환: 25
+블록의 명시적 반환: 25
+return 없는 블록: undefined</pre></div><p>식 형태와 return을 작성한 블록은 모두 25를 반환한다.<br />return이 없는 블록은 계산식을 적었어도 undefined를 반환한다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>이름·익명 함수·화살표 함수를 콜백으로 전달하기</h2></div><p>applyOperation은 값 하나와 처리 함수 하나를 받는다.<br />전달받은 함수에 값을 넣어 호출하고, 그 결과를 다시 호출한 자리로 반환한다.</p><ul class="lesson-points"><li><strong><code>operation</code>에는 함수 값이 들어온다.</strong> <code>operation(value)</code>는 전달받은 함수를 value로 실행한다.<br />바깥 함수는 더하기나 곱하기 내용을 직접 알지 않아도 전달된 처리를 사용할 수 있다.</li>
+<li><strong><code>addTen</code>과 <code>addTen(5)</code>는 다르다.</strong> addTen은 나중에 호출할 함수이고, addTen(5)는 지금 호출해서 얻은 숫자 15이다.<br />함수를 받을 자리에 숫자 15를 전달하면 operation처럼 호출할 수 없다.</li>
+<li><strong>짧은 처리는 전달하는 자리에서 만들 수 있다.</strong> 익명 함수와 화살표 함수 모두 인수 위치에 직접 작성할 수 있다.<br />별도 이름으로 반복해서 사용할 필요가 없는 작은 처리에 유용하다.</li>
+<li><strong>두 번의 return 역할을 구분한다.</strong> 콜백은 계산한 결과를 applyOperation으로 돌려준다.<br />applyOperation의 return은 그 값을 다시 바깥의 console 출력이나 변수 저장에 사용하게 한다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>07_arrow_callbacks.js</span><span>EXAMPLE</span></div><pre><code>function applyOperation(value, operation) {
+  // ***** TODO 3. 전달받은 함수를 value로 호출하고 그 결과 반환하기 *****
+  return operation(value);
+  // **************************************************************
+}
+const addTen = function (number) {
+  return number + 10;
+};
+console.log("이름으로 전달:", applyOperation(5, addTen));
+console.log("익명 함수로 전달:", applyOperation(5, function (number) {
+  return number * 3;
+}));
+let callbackResult;
+// ***** TODO 4. 값을 두 배로 만드는 화살표 콜백을 applyOperation에 전달하기 *****
+callbackResult = applyOperation(5, (number) =&gt; number * 2);
+// **************************************************************
+console.log("화살표로 전달:", callbackResult);
+console.log("전달할 함수의 자료형:", typeof addTen);
+console.log("호출한 결과의 자료형:", typeof addTen(5));</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">이름으로 전달: 15
+익명 함수로 전달: 15
+화살표로 전달: 10
+전달할 함수의 자료형: function
+호출한 결과의 자료형: number</pre></div><p>이름으로 전달한 함수는 5에 10을 더해 15, 익명 함수는 3을 곱해 15, 화살표 함수는 두 배인 10을 만든다.<br />계산 내용은 콜백이 맡고, applyOperation은 함수를 호출하고 결과를 전달하는 역할을 맡는다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>콜백이라고 항상 나중에 실행되는 것은 아니다</h2></div><p>이번 applyOperation은 함수를 받으면 그 자리에서 바로 호출한다.<br />동기 콜백의 실행 순서를 로그로 확인한다.</p><ul class="lesson-points"><li><strong>바깥의 첫 로그가 먼저 실행된다.</strong> 그다음 applyOperation을 호출하면서 익명 함수를 전달한다.<br />전달받은 함수가 내부에서 호출되어 두 번째 로그를 출력한다.</li>
+<li><strong>콜백이 반환해야 바깥 호출도 마무리된다.</strong> 콜백의 11이 applyOperation을 거쳐 nextValue에 저장된다.<br />이후 세 번째 로그가 실행되므로 순서는 1 → 2 → 3이다.</li>
+<li><strong>콜백은 전달 방식이고 실행 시점은 사용하는 쪽이 정한다.</strong> 어떤 기능에 전달했는지에 따라 바로 호출할 수도 있고 나중에 호출할 수도 있다.<br />지금의 예제는 기다리는 작업 없이 순서대로 실행된다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>07_arrow_callbacks.js</span><span>EXAMPLE</span></div><pre><code>console.log("1. 호출 전");
+const nextValue = applyOperation(10, function (number) {
+  console.log("2. 콜백 실행:", number);
+  return number + 1;
+});
+console.log("3. 호출 후:", nextValue);</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">1. 호출 전
+2. 콜백 실행: 10
+3. 호출 후: 11</pre></div><p>출력 순서는 호출 전 → 콜백 실행 → 호출 후이며, 최종 값은 11이다.<br />콜백을 전달했다는 사실만으로 실행이 비동기로 바뀌는 것은 아니다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">CAUTION</p><h2>화살표 함수는 일반 함수를 완전히 대체하지 않는다</h2></div><p>이번 계산에서는 세 함수 형태의 결과가 같지만 모든 상황에서 의미까지 같은 것은 아니다.<br />화살표 함수는 자신만의 this를 만들지 않고 바깥의 this를 사용한다.</p><p>일반 함수는 호출 방식에 따라 this가 정해질 수 있으므로, 객체의 동작을 만들 때는 차이를 고려해야 한다.<br />현재 예제는 this를 사용하지 않는 계산과 콜백에 한정하며, 배열 메서드에 함수를 전달하는 흐름으로 이어간다.</p></section>
+      <nav class="lesson-pagination" aria-label="주제 이동">
+        <a href="06_functions.html">이전: 함수의 입력과 반환</a>
+        <a href="08_array_methods.html">다음: 배열 메서드</a>
+      </nav>
+    </main>
+  </body>
+</html>

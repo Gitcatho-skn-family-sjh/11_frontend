@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript 04 · 객체 속성과 배열 위치를 따라 필요한 값을 읽는다</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/js-nav.js" defer></script>
+    <script src="04_objects_arrays.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day2">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치"><span>Day 2</span><span>04</span><span>객체와 배열</span></nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT 04</p>
+        <h1>객체 속성과 배열 위치를 따라 필요한 값을 읽는다</h1>
+        <p class="lesson-lead">한 대상의 특징은 객체로, 여러 대상은 배열로 묶는다.<br />속성 접근·배열 갱신·객체 배열의 경로를 익혀 이후 반복과 화면 목록 처리에 사용한다.</p>
+        <div class="lesson-meta"><span>점 · 대괄호</span><span>인덱스 · length</span><span>const · 내부 변경</span></div>
+      </header>
+      <section class="lesson-section" id="section-1">
+        <div class="section-heading"><p class="section-kicker">JAVASCRIPT</p><h2>객체는 속성 이름에 값을 연결한다</h2></div>
+        <p>객체는 중괄호 안에 <code>속성 이름: 값</code> 쌍을 모은 자료구조이다.<br />이름·주소·운영 상태처럼 하나의 대상을 설명하는 값을 함께 보관할 수 있다.</p>
+        <ul class="lesson-points">
+          <li><strong>점 표기법:</strong> <code>library.name</code>은 library 객체에서 name 속성을 읽는다.<br />속성 이름을 코드에서 알고 있을 때 간단하게 사용할 수 있다.</li>
+          <li><strong>대괄호 표기법:</strong> <code>library["name"]</code>도 같은 속성을 읽는다.<br />속성 이름을 문자열 변수에 저장했다면 <code>library[key]</code>로 선택할 수 있다.</li>
+          <li><strong>중첩 객체:</strong> 속성 값이 또 다른 객체일 수 있다.<br /><code>library.address.city</code>는 도서관 객체 → 주소 객체 → 도시 문자열로 이동한다.</li>
+          <li><strong>없는 속성:</strong> 존재하지 않는 속성을 읽으면 undefined이다.<br />중간 값이 undefined나 null이면 곧바로 다음 속성을 읽지 말고, 그 값이 있는지 먼저 확인해야 한다.</li>
+        </ul>
+      </section>
+      <section class="lesson-section" id="section-2">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>점과 대괄호로 같은 객체를 읽는다</h2></div>
+        <p>도서관 이름은 점과 대괄호로 각각 읽고, 도시는 중첩 객체에서 꺼낸다.<br />읽은 값은 안내 문장이나 상세 정보에 사용할 문자열이다.</p>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>04_objects_arrays.js</span><span>EXAMPLE</span></div>
+          <pre><code>const library = {
+  name: "햇살 도서관",
+  address: { city: "서울", floor: 2 }
+};
+const key = "name";
+let city = "";
+// ***** TODO 1. 주소 객체의 city 속성을 city에 대입하기 *****
+city = library.address.city;
+// **************************************************************
+console.log("점으로 읽은 이름:", library.name);
+console.log("대괄호로 읽은 이름:", library["name"]);
+console.log("변수로 고른 이름:", library[key]);
+console.log("중첩 객체의 도시:", city);
+console.log("없는 속성:", library.phone);</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>정상 실행 결과</h3>
+          <pre class="terminal-output">점으로 읽은 이름: 햇살 도서관
+대괄호로 읽은 이름: 햇살 도서관
+변수로 고른 이름: 햇살 도서관
+중첩 객체의 도시: 서울
+없는 속성: undefined</pre>
+        </div>
+        <p>이름을 읽는 세 방법은 모두 햇살 도서관에 도착한다.<br />도시는 address 안의 city를 읽은 서울이며, 없는 phone 속성은 undefined이다.</p>
+      </section>
+      <section class="lesson-section" id="section-3">
+        <div class="section-heading"><p class="section-kicker">JAVASCRIPT</p><h2>배열은 순서가 있는 여러 값을 보관한다</h2></div>
+        <p>배열은 대괄호 안에 값을 순서대로 넣은 자료구조이다.<br />각 항목의 위치인 인덱스를 사용해 값을 읽고, length로 배열의 길이를 확인한다.</p>
+        <ul class="lesson-points">
+          <li><strong>0부터 시작:</strong> 첫 항목은 <code>titles[0]</code>, 두 번째 항목은 <code>titles[1]</code>이다.<br />항목이 두 개일 때 마지막 인덱스는 2가 아니라 1이다.</li>
+          <li><strong>length:</strong> 이 예제처럼 항목이 연속된 배열에서는 항목 수와 같다.<br />마지막 항목은 <code>titles[titles.length - 1]</code>로 읽을 수 있다.</li>
+          <li><strong>범위를 벗어난 읽기:</strong> 없는 위치는 undefined를 반환한다.<br />그 값에 곧바로 추가 속성을 읽거나 메서드를 호출하면 오류가 날 수 있다.</li>
+          <li><strong>배열도 객체:</strong> typeof 배열은 "object"이다.<br />배열인지 구별해야 할 때는 <code>Array.isArray()</code>를 사용할 수 있다.</li>
+        </ul>
+      </section>
+      <section class="lesson-section" id="section-4">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>첫 항목·마지막 항목·배열 길이를 읽는다</h2></div>
+        <p>두 제목 문자열을 배열에 저장한다.<br />배열 전체와 한 항목은 다른 값이므로, 먼저 인덱스로 필요한 항목을 선택한다.</p>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>04_objects_arrays.js</span><span>EXAMPLE</span></div>
+          <pre><code>const titles = ["작은 숲", "도시 산책"];
+let firstTitle = "";
+// ***** TODO 2. titles의 첫 번째 항목을 firstTitle에 대입하기 *****
+firstTitle = titles[0];
+// **************************************************************
+console.log("첫 번째 제목:", firstTitle);
+console.log("마지막 제목:", titles[titles.length - 1]);
+console.log("배열 길이:", titles.length);
+console.log("없는 세 번째 항목:", titles[2]);
+console.log("배열의 typeof:", typeof titles);
+console.log("배열인가:", Array.isArray(titles));</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>정상 실행 결과</h3>
+          <pre class="terminal-output">첫 번째 제목: 작은 숲
+마지막 제목: 도시 산책
+배열 길이: 2
+없는 세 번째 항목: undefined
+배열의 typeof: object
+배열인가: true</pre>
+        </div>
+        <p>길이는 2이고 마지막 항목의 인덱스는 1이다.<br />titles[2]는 세 번째 위치를 뜻하므로 undefined이며, typeof만으로는 배열과 다른 객체를 구분할 수 없다.</p>
+      </section>
+      <section class="lesson-section" id="section-5">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>const는 내부 값까지 고정하는 선언이 아니다</h2></div>
+        <p>객체 속성과 배열 항목은 해당 위치에 새 값을 대입해 갱신할 수 있다.<br />const는 변수에 다른 객체·배열을 다시 대입하지 못하게 할 뿐 내부 상태 전체를 고정하지는 않는다.</p>
+        <ul class="lesson-points">
+          <li><code>library.address.floor = 3;</code>은 같은 객체의 층 정보를 바꾼다.<br /><code>library.open = true;</code>처럼 없던 속성에 대입하면 새 속성이 추가된다.</li>
+          <li><code>titles[1] = "바다 일기";</code>는 기존 두 번째 항목을 교체한다.<br />항목 개수가 바뀌는 작업이 아니므로 배열 길이는 계속 2이다.</li>
+          <li><code>titles = ["다른 제목"];</code>처럼 const 이름에 다른 배열을 재대입하는 것은 허용되지 않는다.<br />변수의 재대입과 기존 객체 내부 값 변경을 구분한다.</li>
+        </ul>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>04_objects_arrays.js</span><span>EXAMPLE</span></div>
+          <pre><code>library.address.floor = 3;
+library.open = true;
+// ***** TODO 3. titles의 두 번째 항목을 바다 일기로 갱신하기 *****
+titles[1] = "바다 일기";
+// **************************************************************
+console.log("변경한 층:", library.address.floor);
+console.log("추가한 운영 상태:", library.open);
+console.log("변경한 두 번째 제목:", titles[1]);
+console.log("갱신 후 배열 길이:", titles.length);</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>정상 실행 결과</h3>
+          <pre class="terminal-output">변경한 층: 3
+추가한 운영 상태: true
+변경한 두 번째 제목: 바다 일기
+갱신 후 배열 길이: 2</pre>
+        </div>
+        <p>층은 3으로, 두 번째 제목은 바다 일기로 바뀌며 운영 상태 속성이 추가된다.<br />기존 항목 하나만 교체했으므로 titles.length는 2로 유지된다.</p>
+      </section>
+      <section class="lesson-section" id="section-6">
+        <div class="section-heading"><p class="section-kicker">JAVASCRIPT</p><h2>객체 배열에서는 위치를 고른 뒤 속성을 읽는다</h2></div>
+        <p>도서 한 권의 제목·저자·대출 여부를 객체로 묶고, 여러 도서를 배열에 넣을 수 있다.<br />목록 화면의 카드 하나에 들어갈 정보가 객체 하나에 모이는 구조이다.</p>
+        <ul class="lesson-points">
+          <li><code>books[1]</code>은 두 번째 책 객체이고 <code>books[1].available</code>은 그 책의 대출 가능 여부이다.<br />첫 번째 책의 제목이나 두 번째 책의 저자와 혼동하지 않도록 위치와 속성을 나누어 읽는다.</li>
+          <li>속성에서 꺼낸 원시값은 꺼낸 시점의 값이다.<br />원래 객체를 나중에 갱신해도 앞서 저장한 불리언이 자동으로 바뀌지는 않는다.</li>
+          <li>객체를 만들었다고 화면에 카드가 자동으로 생기지는 않는다.<br />뒤의 반복문과 DOM에서 각 항목을 읽고 표시하는 코드를 연결한다.</li>
+        </ul>
+      </section>
+      <section class="lesson-section" id="section-7">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>두 번째 책의 상태를 읽고 갱신한다</h2></div>
+        <p>두 책의 정보를 가진 배열에서 두 번째 책의 불리언 상태를 꺼내 저장한다.<br />그 뒤 객체 속성을 바꾸고, 현재 속성과 앞서 저장한 값을 비교한다.</p>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>04_objects_arrays.js</span><span>EXAMPLE</span></div>
+          <pre><code>const books = [
+  { title: "작은 숲", author: "김하늘", available: true },
+  { title: "도시 산책", author: "이바다", available: false }
+];
+let secondAvailable;
+// ***** TODO 4. 두 번째 책의 available 값을 secondAvailable에 대입하기 *****
+secondAvailable = books[1].available;
+// **************************************************************
+console.log("첫 번째 책 제목:", books[0].title);
+console.log("두 번째 책 저자:", books[1].author);
+console.log("꺼내 저장한 상태:", secondAvailable);
+// ***** TODO 5. 두 번째 책의 available 속성을 true로 갱신하기 *****
+books[1].available = true;
+// **************************************************************
+console.log("현재 객체의 상태:", books[1].available);
+console.log("앞서 저장한 불리언:", secondAvailable);</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>정상 실행 결과</h3>
+          <pre class="terminal-output">첫 번째 책 제목: 작은 숲
+두 번째 책 저자: 이바다
+꺼내 저장한 상태: false
+현재 객체의 상태: true
+앞서 저장한 불리언: false</pre>
+        </div>
+        <p>두 번째 책은 처음에 대출 불가 false이며 이후 현재 속성은 true로 갱신된다.<br />앞서 꺼낸 secondAvailable은 원시값 false를 저장한 것이므로 그대로 남는다.</p>
+      </section>
+      <nav class="lesson-pagination" aria-label="차시 이동">
+        <a href="03_operators_conditions.html">이전: 연산자와 조건문</a>
+        <a href="05_loops.html">다음: 반복문</a>
+      </nav>
+    </main>
+  </body>
+</html>

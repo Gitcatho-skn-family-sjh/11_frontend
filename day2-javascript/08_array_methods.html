@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript 08 · 배열을 변경하고 필요한 결과를 만들기</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/js-nav.js" defer></script>
+    <script src="08_array_methods.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day2">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치"><span>Day 2</span><span>08</span><span>JavaScript</span></nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT 08</p>
+        <h1>배열을 변경하고 필요한 결과를 만들기</h1>
+        <p class="lesson-lead">원본을 바꾸는 메서드와 새 결과를 만드는 메서드를 구분한다.<br />콜백의 반환값이 각 메서드에서 어떻게 사용되는지 확인한다.</p>
+      </header>
+      <p>이 페이지의 EXAMPLE은 <code>08_array_methods.js</code>의 연속된 구간이다.<br />브라우저 Console 또는 파일이 있는 폴더의 <code>node 08_array_methods.js</code> 명령으로 전체 실행 결과를 확인할 수 있다.</p>
+      <section class="lesson-section"><div class="section-heading"><p class="section-kicker">ARRAY METHOD</p><h2>메서드는 배열에 정해진 작업을 요청하는 함수이다</h2></div><p>배열의 메서드는 <code>배열.메서드(인수)</code> 형태로 호출한다.<br />호출한 뒤 원본이 바뀌었는지와 어떤 값을 반환했는지는 별도로 확인해야 한다.</p><ul class="lesson-points"><li><strong>원본 변경과 반환은 같은 뜻이 아니다.</strong> push는 원본에 항목을 추가하지만 반환하는 것은 새 길이이다.<br />filter는 원본 배열을 바꾸지 않고 선택한 항목의 새 배열을 반환한다.</li>
+<li><strong>콜백의 반환값과 메서드의 반환값도 구분한다.</strong> filter 콜백은 항목을 선택할지 판단한 불리언을 반환한다.<br />filter 메서드 자체는 그 판단을 모아 만든 배열을 반환한다.</li>
+<li><strong>필요한 결과 모양부터 정한다.</strong> 항목 하나가 필요하면 find, 일부 항목의 배열이면 filter, 변환한 값의 배열이면 map이다.<br />항목마다 출력 같은 작업만 수행하면 forEach를 사용할 수 있다.</li></ul></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>push·pop으로 원본을 바꾸고 includes로 포함 여부 읽기</h2></div><p>basket은 두 문자열이 들어 있는 배열이다.<br />항목을 추가하거나 꺼낸 뒤의 원본 배열과 각 메서드의 반환값을 따로 출력한다.</p><ul class="lesson-points"><li><strong><code>push</code>는 끝에 추가하고 새 길이를 반환한다.</strong> 사과를 추가하면 basket은 세 항목이 되고 반환값은 숫자 3이다.<br />반환값이 추가한 문자열 사과나 배열 전체인 것은 아니다.</li>
+<li><strong><code>pop</code>은 끝 항목을 제거해서 반환한다.</strong> 사과를 꺼내면 반환값은 사과이고 basket에는 다시 두 항목이 남는다.<br />빈 배열에 pop을 호출하면 제거할 항목이 없으므로 undefined를 반환한다.</li>
+<li><strong><code>includes</code>는 포함 여부만 반환한다.</strong> 배열에 문자열 우유가 있으므로 true이며 원본은 바뀌지 않는다.<br />배열의 문자열 값 하나가 일치하는지 검사하는 것이지, 문장 중 일부 글자를 찾는 예제는 아니다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>08_array_methods.js</span><span>EXAMPLE</span></div><pre><code>const basket = ["우유", "빵"];
+let newLength;
+// ***** TODO 1. basket 끝에 사과를 추가하고 새 길이 저장하기 *****
+newLength = basket.push("사과");
+// **************************************************************
+console.log("push 반환값:", newLength);
+console.log("push 뒤 원본:", basket);
+const removedItem = basket.pop();
+console.log("pop 반환값:", removedItem);
+console.log("pop 뒤 원본:", basket);
+console.log("우유 포함:", basket.includes("우유"));
+console.log("빈 배열의 pop:", [].pop());</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">push 반환값: 3
+push 뒤 원본: [ '우유', '빵', '사과' ]
+pop 반환값: 사과
+pop 뒤 원본: [ '우유', '빵' ]
+우유 포함: true
+빈 배열의 pop: undefined</pre></div><p>push의 반환값 3과 pop의 반환값 사과는 서로 다른 종류의 값이다.<br />배열은 추가·제거로 바뀌지만 includes는 값을 읽기만 한다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>forEach로 각 책에 출력 작업 수행하기</h2></div><p>세 권의 책 객체를 같은 배열에 담아 뒤의 예제에서도 계속 사용한다.<br />forEach는 각 객체를 콜백의 book으로 전달하여 출력문을 한 번씩 실행한다.</p><ul class="lesson-points"><li><strong>콜백의 book은 배열 전체가 아니다.</strong> 첫 호출은 작은 숲 객체, 두 번째는 도시 산책 객체, 세 번째는 바다 일기 객체를 받는다.<br />현재 항목의 제목은 book.title로 읽는다.</li>
+<li><strong>forEach는 새 배열을 모으는 메서드가 아니다.</strong> 콜백에서 어떤 값을 return하더라도 그 값으로 결과 배열을 만들지 않는다.<br />forEach 자체의 반환값은 undefined이므로 변환 결과 배열이 필요하면 map을 사용한다.</li>
+<li><strong>forEach 콜백은 반복문 본문과 종료 방식이 다르다.</strong> 콜백 안에서는 바깥 반복을 제어하는 break·continue를 그대로 사용할 수 없으며, return은 현재 콜백 호출만 끝내고 전체 순회를 멈추지 않는다.<br />반복을 중간에 끝내려면 for...of와 break를, 첫 조건 일치 항목을 찾으려면 뒤에서 다룰 find를 사용한다.</li>
+<li><strong>반복문과 콜백 방식은 표현이 다르다.</strong> 앞서 배운 for...of는 본문을 직접 반복하고, forEach는 전달한 함수를 항목마다 호출한다.<br />이번에는 함수 전달과 항목별 작업의 관계를 익힌다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>08_array_methods.js</span><span>EXAMPLE</span></div><pre><code>const books = [
+  { title: "작은 숲", available: true },
+  { title: "도시 산책", available: false },
+  { title: "바다 일기", available: true }
+];
+const forEachResult = books.forEach(function (book) {
+  console.log("항목별 출력:", book.title);
+});
+console.log("forEach 반환값:", forEachResult);</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">항목별 출력: 작은 숲
+항목별 출력: 도시 산책
+항목별 출력: 바다 일기
+forEach 반환값: undefined</pre></div><p>책 제목 세 개가 순서대로 출력되지만 forEach의 반환값은 undefined이다.<br />출력 작업이 실행된 것과 결과 배열을 반환받은 것은 다른 일이다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>같은 배열에서 객체 하나·객체 배열·문자열 배열 만들기</h2></div><p>같은 books를 find·filter·map으로 각각 처리한다.<br />조건을 판단할지, 새 항목으로 쓸 값을 만들지에 따라 콜백의 반환식이 달라진다.</p><div class="day1-table-scroll" role="region" aria-label="find filter map 반환값 비교" tabindex="0"><table><thead><tr><th>메서드</th><th>콜백이 반환하는 값</th><th>메서드가 반환하는 값</th></tr></thead><tbody><tr><td>find</td><td>현재 제목이 일치하는가?</td><td>첫 일치 객체 또는 undefined</td></tr><tr><td>filter</td><td>현재 책이 대출 가능한가?</td><td>조건을 통과한 객체들의 배열</td></tr><tr><td>map</td><td>현재 책으로 만든 제목 문자열</td><td>변환한 문자열들의 배열</td></tr></tbody></table></div><ul class="lesson-points"><li><strong>find는 첫 일치 항목을 찾으면 끝난다.</strong> 도시 산책 객체 하나를 반환한다.<br />찾지 못하면 undefined이므로 속성을 읽으려면 먼저 존재 여부를 확인한다.</li>
+<li><strong>filter는 0개 이상을 담은 새 배열을 반환한다.</strong> 대출 가능한 작은 숲과 바다 일기가 남는다.<br />없으면 []이고 length는 0이다. 빈 배열 자체가 항목이 있다는 뜻은 아니다.</li>
+<li><strong>map 콜백의 반환값은 새 배열의 항목이다.</strong> 객체에서 제목 문자열을 만들면 문자열 배열이 된다.<br />이 예제처럼 연속된 배열에서는 입력·결과 길이가 같다. 일부만 남기는 목적에는 filter를 사용한다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>08_array_methods.js</span><span>EXAMPLE</span></div><pre><code>let foundBook;
+let availableBooks = [];
+let titleLines = [];
+// ***** TODO 2. 제목이 도시 산책인 첫 객체를 찾는 메서드를 골라 작성하기 *****
+foundBook = books.find((book) =&gt; book.title === "도시 산책");
+// **************************************************************
+// ***** TODO 3. 대출 가능한 객체만 담는 메서드를 골라 작성하기 *****
+availableBooks = books.filter((book) =&gt; book.available === true);
+// **************************************************************
+// ***** TODO 4. 각 객체를 제목 문자열로 바꾸는 메서드를 골라 작성하기 *****
+titleLines = books.map((book) =&gt; `제목: ${book.title}`);
+// **************************************************************
+console.log("find 결과:", foundBook);
+console.log("filter 결과:", availableBooks);
+console.log("map 결과:", titleLines);
+console.log("없는 제목의 find:", books.find((book) =&gt; book.title === "없는 제목"));
+console.log("없는 제목의 filter:", books.filter((book) =&gt; book.title === "없는 제목"));
+console.log("원본 첫 제목:", books[0].title);</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">find 결과: { title: '도시 산책', available: false }
+filter 결과: [
+  { title: '작은 숲', available: true },
+  { title: '바다 일기', available: true }
+]
+map 결과: [ '제목: 작은 숲', '제목: 도시 산책', '제목: 바다 일기' ]
+없는 제목의 find: undefined
+없는 제목의 filter: []
+원본 첫 제목: 작은 숲</pre></div><p>find는 객체 하나, filter는 객체 두 개의 배열, map은 문자열 세 개의 배열이다.<br />없는 제목을 찾으면 find는 undefined, filter는 []이며 이번 변환에서 원본 첫 제목은 그대로 유지된다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>새 배열이 생겨도 내부 객체는 공유될 수 있다</h2></div><p>filter는 새 배열을 만들지만 선택된 객체를 깊은 복사하지는 않는다.<br />배열 자체를 바꾸는 작업과 객체 내부 속성을 바꾸는 작업을 비교한다.</p><ul class="lesson-points"><li><strong>배열 자체는 별개이다.</strong> originalItems와 pickedItems를 ===로 비교하면 false이다.<br />pickedItems에 새 항목을 push해도 originalItems의 길이는 늘지 않는다.</li>
+<li><strong>두 배열의 첫 항목은 같은 객체이다.</strong> 첫 항목끼리 ===로 비교하면 true이다.<br />pickedItems[0].quantity를 바꾸면 originalItems[0].quantity로 읽어도 바뀐 값 2가 나온다.</li>
+<li><strong>새 배열을 반환한다고 내부까지 복사되는 것은 아니다.</strong> filter 결과는 기존 객체를 참조하고, map도 콜백이 원본 객체를 그대로 반환하면 공유할 수 있다.<br />객체 변경을 피하려는 목적과 단순히 새 배열이 필요한 목적을 구분한다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>08_array_methods.js</span><span>EXAMPLE</span></div><pre><code>const originalItems = [{ title: "연필", quantity: 1 }];
+const pickedItems = originalItems.filter(() =&gt; true);
+console.log("같은 배열인가:", originalItems === pickedItems);
+console.log("첫 객체는 같은가:", originalItems[0] === pickedItems[0]);
+pickedItems[0].quantity = 2;
+console.log("원본 객체의 수량:", originalItems[0].quantity);
+pickedItems.push({ title: "지우개", quantity: 1 });
+console.log("각 배열의 길이:", originalItems.length, pickedItems.length);</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">같은 배열인가: false
+첫 객체는 같은가: true
+원본 객체의 수량: 2
+각 배열의 길이: 1 2</pre></div><p>배열 비교는 false, 첫 객체 비교는 true이다.<br />수량 변경은 양쪽에서 보이지만 새 객체를 추가한 뒤 배열 길이는 원본 1·선택 배열 2로 달라진다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>선택 제목과 배열 가공 결과를 안내 문장으로 연결하기</h2></div><p>selectedTitles에는 선택한 제목 문자열을, books에는 모든 책 객체를 둔다.<br />선택된 제목인지 검사해 객체를 고르고, 앞에서 만든 대출 가능 배열을 안내 문장에 사용한다.</p><ul class="lesson-points"><li><strong>includes 결과를 filter 조건에 연결한다.</strong> 현재 book.title이 selectedTitles에 들어 있으면 true이다.<br />작은 숲과 바다 일기 객체만 새 배열에 남고, forEach가 두 제목을 출력한다.</li>
+<li><strong>배열을 받는 함수는 길이로 안내를 만든다.</strong> makeAvailabilityMessage는 전체 배열과 대출 가능 배열을 받아 길이를 읽는다.<br />앞 예제의 availableBooks가 다시 함수의 인수로 사용되어 3권 중 2권이라는 문장이 된다.</li>
+<li><strong>빈 데이터도 별도의 정상 상황이다.</strong> 전체 배열 길이가 0이면 등록된 책이 없다는 문장을 먼저 반환한다.<br />빈 배열과 실행 오류를 같은 것으로 처리하지 않는다.</li></ul><div class="code-panel"><div class="code-panel-header"><span>08_array_methods.js</span><span>EXAMPLE</span></div><pre><code>const selectedTitles = ["작은 숲", "바다 일기"];
+let selectedBooks = [];
+// ***** TODO 5. 선택 제목에 포함되는 책 객체만 새 배열로 고르기 *****
+selectedBooks = books.filter((book) =&gt; selectedTitles.includes(book.title));
+// **************************************************************
+selectedBooks.forEach(function (book) {
+  console.log("선택한 책:", book.title);
+});
+function makeAvailabilityMessage(allItems, availableItems) {
+  if (allItems.length === 0) {
+    return "등록된 책이 없습니다.";
+  }
+  return `${allItems.length}권 중 ${availableItems.length}권을 대출할 수 있습니다.`;
+}
+console.log("대출 안내:", makeAvailabilityMessage(books, availableBooks));
+console.log("빈 목록 안내:", makeAvailabilityMessage([], []));</code></pre></div>
+<div class="demo-surface"><h3>완성 코드의 실행 결과</h3><pre class="terminal-output">선택한 책: 작은 숲
+선택한 책: 바다 일기
+대출 안내: 3권 중 2권을 대출할 수 있습니다.
+빈 목록 안내: 등록된 책이 없습니다.</pre></div><p>선택한 책 두 권이 출력되고 대출 안내에는 전체 3권·가능 2권이 반영된다.<br />객체 접근 → 조건 선택 → 반복 출력 → 함수 반환을 한 흐름으로 연결했다.</p></section>
+<section class="lesson-section"><div class="section-heading"><p class="section-kicker">NEXT</p><h2>가져온 데이터도 배열의 모양을 확인해서 처리한다</h2></div><p>지금은 코드 안에 준비한 배열을 사용했지만, 다른 곳에서 받은 데이터도 객체·배열로 읽어 같은 처리를 적용할 수 있다.<br />무엇을 반환받았는지 확인한 다음, 필요한 항목을 선택하거나 출력할 문자열로 변환한다.</p><p>다음 주제부터는 화면의 요소를 찾아 값을 바꾸는 방법으로 이어진다.<br />자료를 고르는 코드와 자료를 보여 주는 코드를 나누면 데이터 처리 함수를 재사용하기 쉽다.</p></section>
+      <nav class="lesson-pagination" aria-label="주제 이동">
+        <a href="07_arrow_callbacks.html">이전: 화살표 함수와 콜백</a>
+        <a href="09_dom_select.html">다음: 화면 요소 선택</a>
+      </nav>
+    </main>
+  </body>
+</html>

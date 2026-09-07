@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fetch로 날씨 카드 만들기</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../../assets/lesson.css" />
+    <link rel="stylesheet" href="../../assets/day1.css" />
+    <link rel="stylesheet" href="../async.css" />
+    <script src="../../assets/js-nav.js" defer></script>
+    <script src="../provided.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day3">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치">
+        <span>Day 3</span><span>배열 · DOM · Fetch</span>
+      </nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">DAY 3 · DATA &amp; FETCH 06</p>
+        <h1>Fetch로 날씨 카드를 만든다</h1>
+        <p class="lesson-lead">
+          도시 좌표를 서버에 보내고 JSON 응답을 받는다.<br />응답 객체의 값을
+          카드에 배치하면서 요청부터 화면 출력까지 연결한다.
+        </p>
+      </header>
+
+      <section class="lesson-section" id="proxy">
+        <div class="section-heading">
+          <p class="section-kicker">SAFE FLOW</p>
+          <h2>브라우저는 외부 API가 아니라 수업용 서버에 요청한다</h2>
+        </div>
+        <p>
+          OpenWeather 같은 외부 서비스는 API 키로 사용자를 확인한다.<br />브라우저
+          JavaScript에 키를 넣으면 개발자 도구와 소스 파일에서 누구나 확인할 수
+          있다.
+        </p>
+        <pre><code>브라우저 ── GET /api/weather ──▶ server.py ──▶ OpenWeather
+         ◀── 정리된 JSON ──────          ◀── 외부 응답</code></pre>
+        <ul class="lesson-points">
+          <li>
+            <strong>로컬 API 서버를 중간에 둔다.</strong> 브라우저는
+            <code>lessonApiUrl()</code>로 8001 포트의
+            <code>/api/weather</code>에 요청하므로 코드에 외부 API 키를 넣지
+            않는다.<br />server.py가 환경변수의 키를 사용하고 화면에 필요한
+            필드만 골라 반환한다.
+          </li>
+          <li>
+            <strong>기본값은 mock이다.</strong> 키와 인터넷이 없어도 항상 같은
+            JSON을 받아 DOM 코드를 연습할 수 있다.<br />live는 실제 값과 호출
+            비용이 발생할 수 있으므로 강사가 명시적으로 서버 실행 옵션을 켠
+            경우에만 사용한다.
+          </li>
+          <li>
+            <strong>프록시는 응답 계약을 단순하게 만든다.</strong> 외부 응답
+            전체를 화면에 넘기지 않고 place, temperature, humidity처럼 수업에서
+            사용할 속성만 반환한다.<br />API 제공자가 바뀌어도 브라우저가 사용할
+            구조를 일정하게 유지할 수 있다.
+          </li>
+        </ul>
+      </section>
+
+      <section class="lesson-section" id="query-string">
+        <div class="section-heading">
+          <p class="section-kicker">GET QUERY</p>
+          <h2>선택한 좌표를 URL의 검색 매개변수로 만든다</h2>
+        </div>
+        <p>
+          도시 선택 값은 <code>37.5665,126.9780</code>처럼 위도와 경도를 쉼표로
+          묶어 두었다.<br /><code>split</code>으로 나눈 뒤
+          <code>URLSearchParams</code>에 넣으면 안전한 쿼리 문자열을 만들 수
+          있다.
+        </p>
+        <pre><code>const [lat, lon] = citySelect.value.split(",");
+const params = new URLSearchParams({ lat, lon, mode: modeSelect.value });
+const response = await fetch(lessonApiUrl(`/api/weather?${params}`));</code></pre>
+        <ul class="lesson-points">
+          <li>
+            <strong>GET 요청은 주소에 조회 조건을 표현한다.</strong> 실제 요청
+            URL은
+            <code
+              >http://127.0.0.1:8001/api/weather?lat=37.5665&amp;lon=126.9780&amp;mode=mock</code
+            >
+            형태이다.<br />Network 탭에서 매개변수와 상태 코드를 직접 확인할 수
+            있다.
+          </li>
+          <li>
+            <strong><code>response.ok</code>를 먼저 검사한다.</strong> fetch는
+            400이나 503 응답도 Response로 받을 수 있으므로 직접 성공 여부를
+            확인한다.<br />실패 응답의 message를 읽어 사용자가 다음 행동을 알 수
+            있게 표시한다.
+          </li>
+          <li>
+            <strong
+              ><code>response.json()</code>은 본문을 JavaScript 객체로
+              바꾼다.</strong
+            >
+            변환된 객체의 속성을 <code>textContent</code>로 카드에 넣는다.<br />데이터
+            수신과 DOM 출력은 서로 다른 단계이다.
+          </li>
+        </ul>
+      </section>
+
+      <section class="lesson-section" id="example">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE</p>
+          <h2>도시를 선택해 날씨 결과를 카드로 확인한다</h2>
+        </div>
+        <p>
+          먼저 mock 모드로 요청 흐름과 화면 변화를 확인한다.<br />live 모드는
+          서버에 허용 옵션과 API 키가 모두 설정된 수업 환경에서만 성공한다.
+        </p>
+        <pre><code>const data = await response.json();
+place.textContent = data.place;
+temperature.textContent = `${data.temperature} ℃`;
+humidity.textContent = `${data.humidity} %`;</code></pre>
+        <div class="demo-surface">
+          <form id="weather-form" aria-busy="false">
+            <div class="async-controls">
+              <div>
+                <label for="city">도시</label
+                ><select id="city" name="city">
+                  <option value="37.5665,126.9780">서울</option>
+                  <option value="35.1796,129.0756">부산</option>
+                  <option value="33.4996,126.5312">제주</option>
+                </select>
+              </div>
+              <div>
+                <label for="weather-mode">응답 방식</label
+                ><select id="weather-mode" name="mode">
+                  <option value="mock">mock · 키 없이 연습</option>
+                  <option value="live">live · 실제 OpenWeather</option>
+                </select>
+              </div>
+              <button id="weather-button" type="submit">날씨 확인</button>
+            </div>
+          </form>
+          <p
+            id="weather-status"
+            class="async-status"
+            data-state="idle"
+            role="status"
+            aria-live="polite"
+          >
+            요청 전이다.
+          </p>
+          <article id="weather-card" class="callout" hidden>
+            <p>
+              <strong id="weather-place">-</strong> ·
+              <span id="weather-description">-</span>
+            </p>
+            <dl>
+              <div>
+                <dt>기온</dt>
+                <dd id="weather-temperature">-</dd>
+              </div>
+              <div>
+                <dt>체감 온도</dt>
+                <dd id="weather-feels-like">-</dd>
+              </div>
+              <div>
+                <dt>습도</dt>
+                <dd id="weather-humidity">-</dd>
+              </div>
+              <div>
+                <dt>풍속</dt>
+                <dd id="weather-wind">-</dd>
+              </div>
+              <div>
+                <dt>데이터 출처</dt>
+                <dd id="weather-source">-</dd>
+              </div>
+              <div>
+                <dt>확인 시각</dt>
+                <dd id="weather-fetched-at">-</dd>
+              </div>
+            </dl>
+          </article>
+          <details>
+            <summary>서버가 정리한 JSON 보기</summary>
+            <pre><code id="weather-raw">아직 받은 응답이 없다.</code></pre>
+          </details>
+        </div>
+        <ul class="lesson-points">
+          <li>
+            <strong>요청 중에는 버튼과 선택 상자를 잠근다.</strong> 같은 요청이
+            겹치지 않으며 상태 문구가 로딩 중으로 바뀐다.<br />성공과 실패 모두
+            finally에서 다시 사용할 수 있게 복구한다.
+          </li>
+          <li>
+            <strong>성공하면 카드와 원본 보기가 함께 갱신된다.</strong> 카드에는
+            읽기 쉬운 단위를 붙이고 details에는 서버가 반환한 객체를 들여쓰기한
+            JSON으로 표시한다.<br />둘은 같은 데이터를 서로 다른 목적에 맞춰
+            표현한 결과이다.
+          </li>
+          <li>
+            <strong>오류이면 이전 카드를 숨긴다.</strong> 이전 성공 결과가 새
+            요청의 결과처럼 남지 않게 하고 서버의 안전한 안내만 표시한다.<br />API
+            키나 외부 서비스의 전체 오류 응답은 브라우저로 전달하지 않는다.
+          </li>
+        </ul>
+        <p>
+          <a href="https://openweathermap.org/api/current"
+            >OpenWeather 공식 문서: Current Weather Data</a
+          >에서 실제 요청 매개변수와 응답 구조를 확인할 수 있다.
+        </p>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="차시 이동">
+        <a href="../05_form_api/index.html">이전: 폼과 POST 검색</a>
+        <a href="../07_openai_api/index.html">다음: OpenAI API</a>
+      </nav>
+    </main>
+  </body>
+</html>

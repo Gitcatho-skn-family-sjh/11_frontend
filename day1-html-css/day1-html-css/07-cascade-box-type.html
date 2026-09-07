@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>박스 모델과 글자가 차지하는 공간</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/day1-nav.js" defer></script>
+    <style>
+      .bm-demo { color: #142023; }
+      .bm-scroll { max-width: 100%; overflow-x: auto; }
+      .bm-columns { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+      .bm-column { flex: 1 1 240px; min-width: 0; }
+      .bm-caption { margin: 0 0 10px; font-weight: 800; }
+      .bm-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+      .bm-legend span { padding: 4px 8px; border: 1px solid #142023; border-radius: 4px; }
+      .bm-legend .bm-content-key { background: #bdefff; }
+      .bm-legend .bm-padding-key { background: #ffdc66; }
+      .bm-legend .bm-border-key { background: #a35b16; color: white; }
+      .bm-legend .bm-margin-key { background: #ffe0e3; }
+      .bm-model-stage { display: flow-root; width: 340px; background: #ffe0e3; }
+      .bm-model-card {
+        box-sizing: content-box;
+        width: 220px;
+        /* ***** TODO 1. 내용 바깥에 padding, border, margin을 순서대로 작성하기 ***** */
+        padding: 20px;
+        border: 8px solid #a35b16;
+        margin: 24px 32px;
+        /* ************************************************************** */
+        background: #ffdc66;
+      }
+      .bm-content { min-height: 72px; background: #bdefff; font-size: 16px; line-height: 24px; }
+      .bm-space-stage { display: flow-root; width: 232px; background: #ffe0e3; }
+      .bm-space-card { box-sizing: content-box; width: 180px; border: 2px solid #142023; background: #ffdc66; }
+      .bm-space-card > div { background: #bdefff; font-size: 16px; line-height: 24px; }
+      .bm-space-padding {
+        /* ***** TODO 2. 테두리 안쪽을 24px 넓히고 바깥 여백을 0으로 지정하기 ***** */
+        padding: 24px;
+        margin: 0;
+        /* ************************************************************** */
+      }
+      .bm-space-margin {
+        /* ***** TODO 3. 테두리 안쪽 여백 없이 바깥 여백만 24px 지정하기 ***** */
+        padding: 0;
+        margin: 24px;
+        /* ************************************************************** */
+      }
+      .bm-short-stage { display: flow-root; width: 320px; background: #ffe0e3; }
+      .bm-short-card {
+        box-sizing: content-box;
+        width: 220px;
+        /* ***** TODO 4. 네 방향 padding과 border 축약 속성 작성하기 ***** */
+        padding: 10px 20px 30px 40px;
+        border: 4px dashed #0057d9;
+        margin: 12px 16px;
+        /* ************************************************************** */
+        background: #ffdc66;
+      }
+      .bm-short-card > div { background: #bdefff; font-size: 16px; line-height: 24px; }
+      .bm-size-stage { width: 320px; }
+      .bm-size-box {
+        width: 240px;
+        padding: 20px;
+        border: 4px solid #142023;
+        margin: 0;
+        background: #ffdc66;
+      }
+      .bm-size-box > div { background: #bdefff; font-size: 16px; line-height: 24px; }
+      .bm-size-content {
+        /* ***** TODO 5. width가 내용 너비를 뜻하도록 box-sizing 작성하기 ***** */
+        box-sizing: content-box;
+        /* ************************************************************** */
+      }
+      .bm-size-border {
+        /* ***** TODO 6. width에 padding과 border를 포함하도록 box-sizing 작성하기 ***** */
+        box-sizing: border-box;
+        /* ************************************************************** */
+      }
+      .bm-ruler { width: 240px; border-top: 3px solid #0057d9; margin: 12px 0; color: #003f9e; font-size: 14px; }
+      .bm-center-stage { display: flow-root; width: 320px; background: #ffe0e3; }
+      .bm-center-card {
+        box-sizing: border-box;
+        width: 200px;
+        padding: 12px;
+        border: 2px solid #142023;
+        background: #ffdc66;
+        /* ***** TODO 7. 남는 가로 공간을 양옆 margin으로 나누기 ***** */
+        margin: 16px auto;
+        /* ************************************************************** */
+      }
+      .bm-collapse-stage { display: flow-root; width: 260px; background: #ffe0e3; }
+      .bm-collapse-box {
+        display: block;
+        box-sizing: border-box;
+        height: 44px;
+        padding: 8px;
+        border: 2px solid #142023;
+        margin: 0;
+        background: #bdefff;
+        font-size: 16px;
+        line-height: 24px;
+      }
+      .bm-collapse-first {
+        /* ***** TODO 8. 앞 박스의 아래 margin을 24px로 지정하기 ***** */
+        margin-bottom: 24px;
+        /* ************************************************************** */
+      }
+      .bm-collapse-second {
+        /* ***** TODO 9. 뒤 박스의 위 margin을 40px로 지정하기 ***** */
+        margin-top: 40px;
+        /* ************************************************************** */
+      }
+      .bm-gap-stage { display: flex; flex-direction: column; gap: 24px; width: 260px; background: #ffe0e3; }
+      .bm-type-card { box-sizing: content-box; width: 240px; padding: 12px; border: 2px solid #142023; margin: 0; background: #ffdc66; }
+      .bm-type-card > p { max-width: none; margin: 0; background: #bdefff; font-size: 16px; font-weight: 400; }
+      .bm-type-compact > p {
+        /* ***** TODO 10. 16px 글자의 한 줄 높이를 20px로 지정하기 ***** */
+        line-height: 1.25;
+        /* ************************************************************** */
+      }
+      .bm-type-roomy > p {
+        /* ***** TODO 11. 16px 글자의 한 줄 높이를 32px로 지정하기 ***** */
+        line-height: 2;
+        /* ************************************************************** */
+      }
+      .bm-type-large > p {
+        /* ***** TODO 12. 20px 글자와 1.6배 줄 높이 지정하기 ***** */
+        font-size: 20px;
+        line-height: 1.6;
+        /* ************************************************************** */
+      }
+    </style>
+  </head>
+  <body class="lesson-page has-day1-sidebar">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치">
+        <span>Day 1</span><span>07</span><span>박스 모델</span>
+      </nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">CSS · BOX MODEL</p>
+        <h1>내용과 여백을 구분하면 박스 크기를 설명할 수 있다</h1>
+        <p class="lesson-lead">
+          화면의 요소는 내용만큼의 공간만 차지하지 않는다.<br />
+          content, padding, border, margin을 구분하고 같은 너비 선언이 어떤 크기를 만드는지 비교한다.
+        </p>
+        <div class="lesson-meta"><span>content</span><span>padding · border · margin</span><span>box-sizing</span><span>line-height</span></div>
+      </header>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">BOX MODEL</p><h2>하나의 요소를 안에서 밖으로 읽는 네 가지 기준</h2></div>
+        <p>박스 모델은 요소의 내용과 그 주변 공간을 계산하는 방식이다.<br />카드가 너무 넓거나 버튼 사이가 좁을 때 어느 영역을 바꿔야 하는지 알려 준다.</p>
+        <ul class="lesson-points">
+          <li><strong>content — 실제 내용 영역:</strong> 글자, 이미지, 자식 요소가 놓인다.<br /><code>content</code>라는 너비 속성을 쓰는 것이 아니라 <code>width</code>, <code>height</code>와 내용의 크기로 영역이 결정된다. <code>content:</code> 속성은 가상 요소 등에서 쓰는 별개의 속성이다.</li>
+          <li><strong>padding — 테두리 안쪽 여백:</strong> 글자와 테두리 사이를 벌린다.<br />요소의 배경이 칠해지고 버튼이라면 클릭 가능한 박스 안에 포함된다. 내용이 테두리에 붙어 답답할 때 사용한다.</li>
+          <li><strong>border — 요소를 감싸는 경계:</strong> 선의 두께도 박스 크기에 포함된다.<br /><code>border: 2px solid black</code>은 두께, 선 종류, 색을 한 번에 지정한다.</li>
+          <li><strong>margin — 테두리 바깥 여백:</strong> 이웃 요소와 거리를 만든다.<br />요소 자신의 배경색은 칠해지지 않는다. 화면에서 margin 색처럼 보이는 부분은 뒤에 놓인 부모의 배경이다.</li>
+        </ul>
+        <p>아래 색상은 영역을 구분하기 위한 표시이다.<br />브라우저 개발자 도구에서 요소를 선택한 뒤 박스 모델 도식을 열면 같은 네 영역의 실제 계산값도 확인할 수 있다.</p>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>1. 배경색과 경계선으로 네 영역 구분하기</h2></div>
+        <p>파란 내용 영역을 노란 padding, 갈색 border, 분홍색 바깥 공간이 둘러싼다.<br />내용의 너비는 220px이고, 여백과 테두리를 더한 박스 너비는 276px이다.</p>
+        <ul class="lesson-points">
+          <li><strong>테두리까지의 너비:</strong> <code>220 + 20 × 2 + 8 × 2 = 276px</code>이다. 여기서 276px은 좌우 테두리 바깥쪽 사이의 거리이다.</li>
+          <li><strong>좌우 margin 포함:</strong> <code>276 + 32 × 2 = 340px</code>이다. 분홍 무대의 너비와 정확히 같다.</li>
+          <li><strong>색의 의미:</strong> 노란 배경은 카드에, 파란 배경은 안쪽 자식 요소에 지정했다. margin 자체에 배경색을 지정한 것이 아니다.</li>
+        </ul>
+        <pre><code>.bm-model-card {
+  box-sizing: content-box;
+  width: 220px;
+  padding: 20px;
+  border: 8px solid #a35b16;
+  margin: 24px 32px;
+  background: #ffdc66;
+}
+
+/* 안쪽 자식 요소가 content 영역을 보여 준다. */
+.bm-content { background: #bdefff; }</code></pre>
+        <div class="demo-surface bm-demo">
+          <div class="bm-scroll" tabindex="0" role="region" aria-label="박스 모델 너비 비교, 좁은 화면에서 가로 스크롤 가능">
+            <div class="bm-model-stage"><div class="bm-model-card"><div class="bm-content">content 220px<br />글자와 이미지가 놓이는 곳<br />높이 72px</div></div></div>
+          </div>
+          <div class="bm-legend" aria-label="영역별 색상"><span class="bm-content-key">파랑: content</span><span class="bm-padding-key">노랑: padding 20px</span><span class="bm-border-key">갈색: border 8px</span><span class="bm-margin-key">분홍: margin</span></div>
+        </div>
+        <p><code>padding: 20px</code>을 <code>10px</code>로 바꾸면 내용 너비는 그대로이고 테두리 바깥 너비는 256px로 줄어든다.<br />이 예제는 <code>content-box</code>이므로 padding을 바꿔도 content의 220px은 유지된다.</p>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>2. padding을 늘린 카드와 margin을 늘린 카드 비교하기</h2></div>
+        <p>두 카드의 content 너비는 모두 180px이고 테두리는 2px이다.<br />같은 24px을 어디에 넣는지에 따라 노란 카드 자체의 크기가 달라진다.</p>
+        <pre><code>.bm-space-card {
+  box-sizing: content-box;
+  width: 180px;
+  border: 2px solid #142023;
+  background: #ffdc66;
+}
+.bm-space-padding { padding: 24px; margin: 0; }
+.bm-space-margin  { padding: 0; margin: 24px; }</code></pre>
+        <div class="demo-surface bm-demo bm-columns">
+          <div class="bm-column"><p class="bm-caption">padding 24px — 안쪽을 넓힌다</p><div class="bm-scroll" tabindex="0" role="region" aria-label="padding 비교"><div class="bm-space-stage"><div class="bm-space-card bm-space-padding"><div>내용 너비 180px</div></div></div></div></div>
+          <div class="bm-column"><p class="bm-caption">margin 24px — 바깥을 벌린다</p><div class="bm-scroll" tabindex="0" role="region" aria-label="margin 비교"><div class="bm-space-stage"><div class="bm-space-card bm-space-margin"><div>내용 너비 180px</div></div></div></div></div>
+        </div>
+        <ul class="lesson-points">
+          <li><strong>padding 카드:</strong> 테두리 바깥 너비는 <code>180 + 48 + 4 = 232px</code>이다. 글자와 테두리 사이에 노란 공간이 생긴다.</li>
+          <li><strong>margin 카드:</strong> 테두리 바깥 너비는 <code>180 + 4 = 184px</code>이다. 양옆 margin까지 포함하면 232px이지만 노란 박스 자체는 작다.</li>
+          <li><strong>바꿔 볼 값:</strong> 두 예제의 24px을 각각 8px로 낮춘다. 첫 카드는 내부가 좁아지고, 둘째 카드는 부모 가장자리와 가까워진다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>3. 네 방향의 여백과 선을 축약해서 작성하기</h2></div>
+        <p>네 방향을 항상 같은 값으로 만들 필요는 없다.<br />값을 네 개 쓰면 위에서 시작해 오른쪽, 아래, 왼쪽으로 시계 방향으로 적용된다.</p>
+        <ul class="lesson-points">
+          <li><strong>값 1개:</strong> <code>padding: 12px</code> — 네 방향 모두 12px이다.</li>
+          <li><strong>값 2개:</strong> <code>padding: 12px 20px</code> — 위·아래 12px, 왼쪽·오른쪽 20px이다.</li>
+          <li><strong>값 3개:</strong> <code>padding: 12px 20px 28px</code> — 위 12px, 왼쪽·오른쪽 20px, 아래 28px이다.</li>
+          <li><strong>값 4개:</strong> <code>padding: 10px 20px 30px 40px</code> — 위 10px, 오른쪽 20px, 아래 30px, 왼쪽 40px이다.</li>
+          <li><strong>한 방향만:</strong> <code>padding-left: 40px</code>, <code>margin-bottom: 16px</code>, <code>border-top: 4px solid blue</code>처럼 쓴다. padding과 margin은 같은 방향 순서를 사용한다.</li>
+        </ul>
+        <pre><code>.bm-short-card {
+  box-sizing: content-box;
+  width: 220px;
+  padding: 10px 20px 30px 40px; /* 위 → 오른쪽 → 아래 → 왼쪽 */
+  border: 4px dashed #0057d9;   /* 두께 → 선 종류 → 색 */
+  margin: 12px 16px;           /* 위아래 → 좌우 */
+  background: #ffdc66;
+}</code></pre>
+        <div class="demo-surface bm-demo">
+          <div class="bm-scroll" tabindex="0" role="region" aria-label="네 방향 여백 비교"><div class="bm-short-stage"><div class="bm-short-card"><div>위 10px · 오른쪽 20px<br />아래 30px · 왼쪽 40px</div></div></div></div>
+        </div>
+        <p>왼쪽 노란 공간은 오른쪽의 두 배이고, 아래쪽은 위쪽의 세 배이다.<br /><code>dashed</code>를 <code>solid</code>로 바꾸면 선 종류만 바뀌고 4px 두께는 그대로이다.</p>
+        <p><code>border</code>는 <code>solid</code>, <code>dashed</code> 같은 선 종류도 지정해야 보인다.<br /><code>border-color</code>만 바꿨는데 선이 보이지 않는다면 기본 <code>border-style: none</code> 상태인지 확인한다.</p>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>4. width 240px은 내용의 너비일까, 테두리까지의 너비일까?</h2></div>
+        <p><code>box-sizing</code>은 width와 height를 어느 경계까지 계산할지 정한다.<br />두 예제에 똑같이 width 240px, padding 20px, border 4px을 주고 계산 기준만 바꾼다.</p>
+        <ul class="lesson-points">
+          <li><strong>content-box:</strong> width는 내용 너비이다. 전체 너비는 <code>240 + 20 × 2 + 4 × 2 = 288px</code>이 된다.</li>
+          <li><strong>border-box:</strong> width 안에 padding과 border가 포함된다. 전체 너비는 240px이고, 내용 너비는 <code>240 − 40 − 8 = 192px</code>이다.</li>
+          <li><strong>margin은 별도:</strong> 어떤 box-sizing을 사용하든 바깥 margin은 width 안에 포함하지 않는다.</li>
+          <li><strong>이 교안의 공통 설정:</strong> <code>lesson.css</code>는 모든 요소에 <code>box-sizing: border-box</code>를 적용한다. 첫 예제에는 <code>content-box</code>를 명시해서 기본 교안 설정을 바꾼다.</li>
+        </ul>
+        <pre><code>.bm-size-box {
+  width: 240px;
+  padding: 20px;
+  border: 4px solid #142023;
+}
+.bm-size-content { box-sizing: content-box; } /* 전체 288px */
+.bm-size-border  { box-sizing: border-box; }  /* 전체 240px */</code></pre>
+        <div class="demo-surface bm-demo bm-columns">
+          <div class="bm-column"><p class="bm-caption">content-box: 내용 240px + 여백과 선</p><div class="bm-scroll" tabindex="0" role="region" aria-label="content-box 너비"><div class="bm-size-stage"><div class="bm-ruler">기준선 240px</div><div class="bm-size-box bm-size-content"><div>content 240px<br />전체 너비 288px</div></div></div></div></div>
+          <div class="bm-column"><p class="bm-caption">border-box: 전체 240px 안에 배분</p><div class="bm-scroll" tabindex="0" role="region" aria-label="border-box 너비"><div class="bm-size-stage"><div class="bm-ruler">기준선 240px</div><div class="bm-size-box bm-size-border"><div>content 192px<br />전체 너비 240px</div></div></div></div></div>
+        </div>
+        <p>두 박스의 padding을 30px로 바꿔 본다.<br />content-box의 전체 너비는 308px로 늘지만, border-box의 전체 너비는 240px을 유지하고 내용 너비가 172px로 줄어든다.</p>
+        <div class="callout is-tip"><h3>고정 너비와 작은 화면</h3><p>정확한 숫자를 비교하기 위해 이 예제들은 실험 박스의 너비를 고정했다.<br />좁은 화면에서는 예제 내부만 가로로 스크롤할 수 있다. 실제 페이지의 카드에는 보통 <code>box-sizing: border-box</code>와 <code>max-width: 100%</code>를 함께 사용해 padding과 border를 포함한 너비가 부모를 넘지 않도록 설계한다.</p></div>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>5. 남는 가로 공간을 margin: auto로 나누기</h2></div>
+        <p>일반 블록 요소에 부모보다 작은 너비를 주고 좌우 margin을 auto로 지정하면 남는 공간을 양쪽에 나누어 배치한다.<br />글자를 가운데 정렬하는 <code>text-align: center</code>와는 달리 박스 자체의 위치를 바꾸는 방법이다.</p>
+        <pre><code>.bm-center-stage { width: 320px; }
+.bm-center-card {
+  box-sizing: border-box;
+  width: 200px;
+  padding: 12px;
+  border: 2px solid #142023;
+  margin: 16px auto;
+}
+/* 남은 120px을 왼쪽 60px, 오른쪽 60px로 나눈다. */</code></pre>
+        <div class="demo-surface bm-demo"><div class="bm-scroll" tabindex="0" role="region" aria-label="가로 중앙 정렬"><div class="bm-center-stage"><div class="bm-center-card">박스 너비 200px<br />글자는 왼쪽 정렬</div></div></div></div>
+        <ul class="lesson-points">
+          <li><strong>너비 계산:</strong> 부모 320px에서 박스 200px을 뺀 120px이 남는다. 좌우 auto가 각각 60px을 사용한다.</li>
+          <li><strong>너비를 240px로 바꾸면:</strong> 좌우는 각각 40px이 된다. 부모 너비를 모두 채우는 블록에는 나눌 공간이 없으므로 이동이 눈에 보이지 않는다.</li>
+          <li><strong>세로 중앙은 다른 문제:</strong> 일반 블록 배치에서 위아래 auto margin만으로 세로 가운데 정렬되지 않는다. 다음 파일에서 Flex의 축과 정렬로 다룬다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>6. 위아래 margin은 언제나 더해지지 않는다</h2></div>
+        <p>일반 블록 흐름에서 인접한 두 요소의 양수 세로 margin은 하나로 합쳐질 수 있다.<br />이를 <strong>margin collapse(마진 상쇄)</strong>라고 하며, 아래 예제에서는 24px와 40px 중 큰 40px이 두 박스 사이의 간격이 된다.</p>
+        <pre><code>.bm-collapse-stage { display: flow-root; }
+.bm-collapse-box { display: block; margin: 0; }
+.bm-collapse-first  { margin-bottom: 24px; }
+.bm-collapse-second { margin-top: 40px; }
+/* 두 형제 박스 사이: 24 + 40이 아니라 40px */
+
+/* 비교: Flex 자식에는 margin을 주지 않고 gap으로 간격을 지정한다. */
+.bm-gap-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}</code></pre>
+        <div class="demo-surface bm-demo bm-columns">
+          <div class="bm-column"><p class="bm-caption">일반 블록: 사이 간격 40px</p><div class="bm-scroll" tabindex="0" role="region" aria-label="세로 margin 상쇄"><div class="bm-collapse-stage"><div class="bm-collapse-box bm-collapse-first">아래 margin 24px</div><div class="bm-collapse-box bm-collapse-second">위 margin 40px</div></div></div></div>
+          <div class="bm-column"><p class="bm-caption">Flex + gap: 사이 간격 24px</p><div class="bm-scroll" tabindex="0" role="region" aria-label="gap으로 지정한 간격"><div class="bm-gap-stage"><div class="bm-collapse-box">자식 margin 0</div><div class="bm-collapse-box">자식 margin 0</div></div></div></div>
+        </div>
+        <ul class="lesson-points">
+          <li><strong>실제 경계를 잰다:</strong> 첫 박스의 아래 테두리부터 둘째 박스의 위 테두리까지가 40px이다. 글자 사이의 거리는 padding과 줄 높이가 섞이므로 같은 값이 아니다.</li>
+          <li><strong>flow-root의 역할:</strong> 이 예제의 부모와 자식 사이로 margin이 빠져나가는 상황을 분리하기 위한 설정이다. 내부에서 일반 블록으로 놓인 두 형제의 세로 margin 상쇄는 여전히 일어난다.</li>
+          <li><strong>상쇄되지 않는 경우:</strong> 좌우 margin에는 이 규칙을 적용하지 않는다. Flex·Grid 아이템 사이의 margin도 상쇄되지 않는다. Flex에서는 간격을 <code>gap</code>으로 모아 관리하는 방법을 자주 사용한다.</li>
+          <li><strong>값을 바꾸면:</strong> 둘째 박스의 margin-top을 12px로 줄이면 사이 간격은 24px이 된다. 음수 margin과 부모·자식 간 상쇄는 이 예제의 계산 범위에서 제외한다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>7. 글자 크기와 줄 높이도 content의 높이를 바꾼다</h2></div>
+        <p>카드 높이를 따로 지정하지 않으면 보통 내용의 높이에 따라 카드가 늘어난다.<br /><code>font-size</code>는 글자 크기이고, <code>line-height</code>는 한 줄이 차지하는 높이이다. 둘은 같은 값이 아니다.</p>
+        <ul class="lesson-points">
+          <li><strong>단위 없는 line-height:</strong> <code>font-size: 16px; line-height: 1.25</code>는 한 줄 높이를 <code>16 × 1.25 = 20px</code>로 만든다.</li>
+          <li><strong>높이를 비교하는 조건:</strong> 아래 문단은 margin이 0이고 <code>&lt;br&gt;</code>로 정확히 두 줄을 만든다. 세 카드의 padding 12px, border 2px은 동일하다.</li>
+          <li><strong>내용이 늘어난 경우:</strong> 실제 문장이 길거나 화면이 좁으면 자동 줄바꿈으로 줄 수가 늘어난다. 이런 카드에 작은 고정 height를 강요하면 내용이 넘칠 수 있다.</li>
+        </ul>
+        <pre><code>.bm-type-card {
+  box-sizing: content-box;
+  width: 240px;
+  padding: 12px;
+  border: 2px solid #142023;
+}
+.bm-type-card > p { margin: 0; font-size: 16px; }
+.bm-type-compact > p { line-height: 1.25; } /* 16 × 1.25 = 20px */
+.bm-type-roomy > p   { line-height: 2; }    /* 16 × 2 = 32px */
+.bm-type-large > p   { font-size: 20px; line-height: 1.6; } /* 32px */
+
+&lt;p&gt;첫 번째 줄입니다.&lt;br /&gt;두 번째 줄입니다.&lt;/p&gt;</code></pre>
+        <div class="demo-surface bm-demo bm-columns">
+          <div class="bm-column"><p class="bm-caption">16px · 줄 높이 20px</p><div class="bm-scroll" tabindex="0" role="region" aria-label="작은 줄 간격"><div class="bm-type-card bm-type-compact"><p>첫 번째 줄입니다.<br />두 번째 줄입니다.</p></div></div><p>content 40px<br />테두리 포함 높이 68px</p></div>
+          <div class="bm-column"><p class="bm-caption">16px · 줄 높이 32px</p><div class="bm-scroll" tabindex="0" role="region" aria-label="넓은 줄 간격"><div class="bm-type-card bm-type-roomy"><p>첫 번째 줄입니다.<br />두 번째 줄입니다.</p></div></div><p>content 64px<br />테두리 포함 높이 92px</p></div>
+          <div class="bm-column"><p class="bm-caption">20px · 줄 높이 32px</p><div class="bm-scroll" tabindex="0" role="region" aria-label="큰 글자와 같은 줄 높이"><div class="bm-type-card bm-type-large"><p>첫 번째 줄입니다.<br />두 번째 줄입니다.</p></div></div><p>content 64px<br />테두리 포함 높이 92px</p></div>
+        </div>
+        <p>첫 카드 높이는 <code>20 × 2 + 12 × 2 + 2 × 2 = 68px</code>이다.<br />둘째와 셋째는 글자 크기가 달라도 한 줄 높이가 32px로 같아서 전체 높이도 모두 92px이다.</p>
+        <p>줄 높이를 크게 한다고 글자 자체가 커지지는 않는다.<br />읽기 편한 문단을 만들 때는 font-size로 글자 크기를, line-height로 줄 사이의 호흡을 따로 조절한다.</p>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="차시 이동">
+        <a href="06-css-cascade.html">이전: 캐스케이드와 상속</a>
+        <a href="08-flex-layout.html">다음: Flex 배치</a>
+      </nav>
+    </main>
+  </body>
+</html>

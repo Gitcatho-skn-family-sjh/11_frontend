@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 2 · 11 · 이벤트가 발생할 때 함수 실행하기</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/js-nav.js" defer></script>
+    <script src="11_events.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day2">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치">
+        <span>Day 2</span><span>11</span><span>JavaScript · DOM</span>
+      </nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT · FUNCTION & EVENT</p>
+        <h1>이벤트가 발생할 때 함수 실행하기</h1>
+        <p class="lesson-lead">앞에서 익힌 함수와 콜백을 브라우저 이벤트에 적용한다.<br />input과 click 이벤트가 발생할 때 현재 입력을 읽어 화면을 갱신한다.</p>
+        <div class="lesson-meta"><span>함수 값 · 호출</span><span>콜백</span><span>화살표 함수</span><span>input</span><span>click</span></div>
+      </header>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">FUNCTION</p>
+          <h2>익힌 함수로 화면 갱신 작업을 묶는다</h2>
+        </div>
+        <p>앞에서 배운 함수는 여러 문장을 하나의 작업으로 묶고 필요할 때 실행하는 단위이다.<br />같은 입력 길이 표시를 처음 화면을 열었을 때와 사용자가 입력했을 때 반복하려면, 그 작업을 함수로 만들어 재사용한다.</p>
+        <pre><code>function updateCount() {
+  const characterCount = memoInput.value.length;
+  count.textContent = characterCount + " / 30";
+}</code></pre>
+        <ul class="lesson-points">
+          <li><strong><code>function updateCount() { ... }</code>는 함수 선언이다.</strong><br />중괄호 안에 실행할 작업을 정의한다. 함수 선언만으로 이 작업이 곧바로 실행되는 것은 아니다.</li>
+          <li><strong><code>updateCount()</code>는 함수 호출이다.</strong><br />괄호를 붙이면 함수 안의 작업을 지금 실행한다. 호출할 때마다 그 시점의 입력값을 다시 읽으므로 최신 길이를 표시할 수 있다.</li>
+          <li><strong><code>updateCount</code>는 함수 자체를 가리키는 값이다.</strong><br />괄호 없이 다른 함수에 전달하면 지금 실행하는 대신 나중에 실행할 작업을 건넬 수 있다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">CALLBACK & EVENT</p>
+          <h2>브라우저에게 나중에 호출할 함수를 전달한다</h2>
+        </div>
+        <p>이벤트는 사용자의 입력이나 클릭처럼 브라우저가 알려 주는 동작과 상태 변화이다.<br /><code>addEventListener</code>는 요소, 이벤트 종류, 실행할 함수를 연결한다. 이처럼 다른 곳에 전달되어 필요한 시점에 호출되는 함수를 콜백이라고 한다.</p>
+        <pre><code>memoInput.addEventListener("input", updateCount);
+// 지금 등록한다. 나중에 input 이벤트가 발생하면 브라우저가 호출한다.
+
+updateCount();
+// 지금 바로 한 번 호출한다.</code></pre>
+        <ul class="lesson-points">
+          <li><strong>어디에서:</strong> <code>memoInput</code>처럼 이벤트를 들을 요소를 선택한다.<br />다른 입력칸에 등록하면 원하는 입력칸의 타이핑에는 반응하지 않는다.</li>
+          <li><strong>어떤 이벤트:</strong> <code>"input"</code>은 사용자가 입력값을 바꿀 때 발생한다.<br />타이핑뿐 아니라 붙여넣기와 지우기에도 반응한다.</li>
+          <li><strong>어떤 동작:</strong> <code>"click"</code>은 버튼을 활성화할 때 발생한다.<br />마우스 클릭과 함께 버튼에 초점을 두고 키보드로 활성화하는 경로도 처리할 수 있다.</li>
+          <li><strong>무슨 함수:</strong> 두 번째 인자로 함수 자체를 전달한다.<br /><code>updateCount()</code>를 넣으면 등록 시점에 실행된 반환값을 전달하게 된다. 이 함수에는 return이 없으므로 반환값은 undefined이고 원하는 리스너가 등록되지 않는다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">ARROW FUNCTION · REVIEW</p>
+          <h2>화살표 함수를 이벤트 콜백으로 다시 사용한다</h2>
+        </div>
+        <p>앞에서 배운 화살표 함수는 <code>=&gt;</code>로 함수를 표현하는 문법이다.<br />매개변수가 없으면 <code>()</code>를 쓰고, 중괄호 안에 실행할 문장을 작성한다. 만들어진 함수 값을 const 변수에 저장해 이벤트에 전달할 수 있다.</p>
+        <pre><code>const copyMemo = () => {
+  const memo = memoInput.value;
+  preview.textContent = "확인한 메모: " + memo;
+};
+
+copyButton.addEventListener("click", copyMemo);</code></pre>
+        <ul class="lesson-points">
+          <li><strong><code>const copyMemo = ...</code>:</strong> 함수 값을 copyMemo 변수에 저장한다.<br />화살표가 있으므로 즉시 실행되는 것이 아니다. <code>copyMemo()</code>로 호출하거나 이벤트가 발생해야 안쪽 작업이 실행된다.</li>
+          <li><strong><code>() =&gt; { ... }</code>:</strong> 입력받을 매개변수 없이 작업을 실행하는 형태이다.<br />이벤트 정보를 받는 <code>(event) =&gt; { ... }</code>처럼 매개변수 자리에 전달받을 값의 이름을 쓸 수도 있다.</li>
+          <li><strong>화살표 함수가 별도의 이벤트 종류를 만드는 것은 아니다.</strong><br />이 예제에서는 함수 선언으로 만든 updateCount와 화살표로 만든 copyMemo를 각각 콜백으로 전달한다.</li>
+          <li>짧은 반환식을 쓰는 화살표 함수도 있다.<br /><code>(number) =&gt; number * 2</code>는 계산값을 바로 반환한다. 여러 문장을 중괄호로 묶으면 반환이 필요할 때 return을 직접 작성한다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">EXAMPLE</p>
+          <h2>입력 길이는 즉시, 메모 확인은 클릭할 때 바꾼다</h2>
+        </div>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>input · click에 서로 다른 함수 연결</span><span>JavaScript</span></div>
+          <pre><code>const memoInput = document.querySelector("#memo-input");
+const count = document.querySelector("#count");
+const preview = document.querySelector("#preview");
+const copyButton = document.querySelector("#copy-button");
+
+function updateCount() {
+  const characterCount = memoInput.value.length;
+  // ***** TODO 1. 입력 길이를 count의 textContent에 표시하기 *****
+  count.textContent = characterCount + " / 30";
+  // **************************************************************
+}
+
+// 화살표 함수도 값이므로 변수에 저장하고 이벤트에 전달할 수 있다.
+const copyMemo = () =&gt; {
+  // ***** TODO 2. 현재 입력값을 읽고 확인한 메모 문장으로 출력하기 *****
+  const memo = memoInput.value;
+  preview.textContent = "확인한 메모: " + memo;
+  // **************************************************************
+};
+
+// 함수 이름만 전달하면 브라우저가 이벤트 발생 시 호출한다.
+// ***** TODO 3. memoInput의 input 이벤트에 updateCount 함수 등록하기 *****
+memoInput.addEventListener("input", updateCount);
+// **************************************************************
+
+// ***** TODO 4. copyButton의 click 이벤트에 copyMemo 함수 등록하기 *****
+copyButton.addEventListener("click", copyMemo);
+// **************************************************************
+
+// 괄호가 있으므로 지금 바로 실행해 최초 화면의 길이도 맞춘다.
+updateCount();</code></pre>
+        </div>
+        <div class="demo-surface">
+          <label for="memo-input">짧은 메모</label>
+          <input id="memo-input" name="memo" type="text" maxlength="30" autocomplete="off" aria-describedby="count" />
+          <p id="count" aria-live="polite">0 / 30</p>
+          <button id="copy-button" type="button">메모 확인</button>
+          <p id="preview" aria-live="polite">아직 확인한 메모가 없다.</p>
+        </div>
+        <ul class="lesson-points">
+          <li><code>산책하기</code>를 입력하면 길이는 <strong>4 / 30</strong>으로 바뀐다.<br />updateCount가 input 이벤트 시점의 value를 다시 읽고 길이 문장으로 변환했기 때문이다.</li>
+          <li>메모 확인 버튼을 누르기 전에는 확인 문장이 그대로이다.<br />버튼을 누르면 copyMemo가 실행되어 <strong>확인한 메모: 산책하기</strong>가 나타난다.</li>
+          <li>입력을 지우면 길이는 즉시 <strong>0 / 30</strong>으로 바뀌지만 확인 문장은 이전 값을 유지한다.<br />두 영역이 각각 input과 click이라는 서로 다른 이벤트에 연결되어 있기 때문이다.</li>
+          <li><code>length</code>는 정확히는 UTF-16 코드 단위 수이다.<br />일반적인 한글 음절은 1로 세지만 이모지 하나는 2 이상으로 계산될 수 있으므로 모든 눈에 보이는 글자 수와 같지는 않다.</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading">
+          <p class="section-kicker">RUN NOW OR LATER</p>
+          <h2>값을 바꾸는 것과 이벤트가 발생하는 것은 다르다</h2>
+        </div>
+        <p>이벤트 리스너를 등록했다고 모든 값 변경을 자동으로 관찰하는 것은 아니다.<br />사용자가 입력하면 input 이벤트가 발생하지만, JavaScript에서 value를 대입하는 것만으로는 input 이벤트가 자동 발생하지 않는다.</p>
+        <pre><code>memoInput.value = "새 메모";
+updateCount();</code></pre>
+        <p>위 코드는 값을 프로그램으로 바꾼 뒤 같은 함수를 직접 호출해 길이를 맞춘다.<br />처음 표시, 사용자 입력, 코드에 의한 변경에서 필요한 갱신 작업을 같은 함수로 재사용할 수 있다.</p>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="주제 이동">
+        <a href="10_dom_value_state.html">이전: 입력값과 요소 상태 다루기</a>
+        <a href="12_form_submit.html">다음: 폼 제출을 처리하고 빈 입력 막기</a>
+      </nav>
+    </main>
+  </body>
+</html>

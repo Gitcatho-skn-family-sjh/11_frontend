@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex의 두 축과 공간 배분</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../assets/lesson.css">
+    <link rel="stylesheet" href="../assets/day1.css">
+    <script src="../assets/day1-nav.js" defer></script>
+    <style>
+      .flex-lesson .fl-samples { display: flex; flex-wrap: wrap; gap: 1rem; }
+      .flex-lesson .fl-sample { flex: 1 1 240px; min-width: 0; }
+      .flex-lesson .fl-label { display: block; margin: 0 0 .5rem; font-weight: 800; }
+      .flex-lesson .fl-box { padding: .6rem; border: 2px dashed var(--ink); border-radius: 8px; background: var(--surface-muted); }
+      .flex-lesson .fl-tile { min-width: 0; padding: .4rem .6rem; border: 2px solid var(--ink); border-radius: 6px; background: var(--yellow); font-weight: 800; text-align: center; overflow-wrap: anywhere; }
+      .flex-lesson .fl-tile:nth-child(even) { background: var(--cyan); }
+      .flex-lesson .fl-nested { display: block; font-size: .75rem; font-weight: 400; }
+      .flex-lesson .fl-parent {
+        /* ***** TODO 1. 직계 자식을 Flex item으로 만드는 display와 간격 작성하기 ***** */
+        display: flex;
+        gap: .5rem;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-axis { display: flex; gap: .5rem; min-height: 200px; align-items: flex-start; }
+      .flex-lesson .fl-row {
+        /* ***** TODO 2. 왼쪽에서 오른쪽으로 놓이는 주축 방향 작성하기 ***** */
+        flex-direction: row;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-column {
+        /* ***** TODO 3. 위에서 아래로 놓이는 주축 방향 작성하기 ***** */
+        flex-direction: column;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-justify { display: flex; gap: .25rem; margin-bottom: .8rem; }
+      .flex-lesson .fl-justify .fl-tile { flex: 0 0 36px; padding: .25rem; }
+      .flex-lesson .fl-start { justify-content: flex-start; }
+      .flex-lesson .fl-center {
+        /* ***** TODO 4. 주축의 남는 공간 가운데에 항목을 모으는 정렬 작성하기 ***** */
+        justify-content: center;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-end { justify-content: flex-end; }
+      .flex-lesson .fl-between {
+        /* ***** TODO 5. 첫 항목과 끝 항목 사이로 여유 공간을 나누는 정렬 작성하기 ***** */
+        justify-content: space-between;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-align { display: flex; gap: .5rem; height: 150px; }
+      .flex-lesson .fl-align .fl-tile { flex: 1; }
+      .flex-lesson .fl-stretch { align-items: stretch; }
+      .flex-lesson .fl-align-center {
+        /* ***** TODO 6. 교차축 가운데에 모든 항목을 놓는 정렬 작성하기 ***** */
+        align-items: center;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-align-start { align-items: flex-start; }
+      .flex-lesson .fl-align-end { align-items: flex-end; }
+      .flex-lesson .fl-self {
+        /* ***** TODO 7. 한 항목만 교차축 끝에 놓는 align-self 작성하기 ***** */
+        align-self: flex-end;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-gap { display: flex; gap: 16px; }
+      .flex-lesson .fl-gap .fl-tile { flex: 0 0 36px; padding: .25rem; }
+      .flex-lesson .fl-gap-distributed { justify-content: space-between; }
+      .flex-lesson .fl-wrap { display: flex; width: min(100%, 280px); height: 230px; gap: 8px; align-items: flex-start; }
+      .flex-lesson .fl-wrap .fl-tile { flex: 0 0 100px; }
+      .flex-lesson .fl-wrap {
+        /* ***** TODO 8. 폭이 부족한 항목을 다음 줄로 보내는 flex-wrap 작성하기 ***** */
+        flex-wrap: wrap;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-lines-start { align-content: flex-start; }
+      .flex-lesson .fl-lines-between {
+        /* ***** TODO 9. 여러 줄 사이에 교차축의 남는 공간을 배분하기 ***** */
+        align-content: space-between;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-share { display: flex; gap: .5rem; }
+      .flex-lesson .fl-share .fl-tile {
+        /* ***** TODO 10. 항목의 기준 크기와 남는 공간 비율을 같게 만들기 ***** */
+        flex: 1;
+        min-width: 0;
+        overflow-wrap: anywhere;
+        /* ************************************************************** */
+      }
+      .flex-lesson .fl-share-ratio .fl-tile:first-child { flex: 2; }
+    </style>
+  </head>
+  <body class="lesson-page has-day1-sidebar flex-lesson">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치"><span>Day 1</span><span>08</span><span>Flex</span></nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">CSS · FLEX LAYOUT</p>
+        <h1>방향을 정하고, 두 축의 공간을 배분한다</h1>
+        <p class="lesson-lead">Flex는 한 방향으로 놓인 항목의 크기와 간격을 조정하는 배치 방식이다.<br>먼저 부모와 주축을 찾고, 그다음 정렬할 축과 남은 공간을 확인한다.</p>
+        <div class="lesson-meta"><span>container / item</span><span>주축 / 교차축</span><span>정렬</span><span>줄바꿈</span><span>공간 배분</span></div>
+      </header>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>1. 배치하려는 항목의 공통 부모를 찾는다</h2></div>
+        <p><code>display: flex</code>를 선언한 요소는 Flex container가 되고, 바로 아래 자식은 Flex item이 된다.<br>카드 안의 제목이나 문단까지 자동으로 같은 행에 놓이는 것은 아니다.</p>
+        <p>아래 코드에는 배치의 차이를 만드는 규칙을 중심으로 표시했다.<br>실제 소스의 선택자 앞에는 예제 스타일이 다른 페이지에 영향을 주지 않도록 <code>.flex-lesson</code>이라는 공통 범위가 추가되며, 색상·테두리 등 비교에 필요한 장식은 미리 정의되어 있다.</p>
+        <ul class="lesson-points">
+          <li><strong>부모에 쓰는 속성:</strong> 방향, 줄바꿈, 항목 사이 간격, 전체 정렬은 container에서 정한다.<br>카드 세 개를 나란히 놓으려면 세 카드를 감싼 요소에 선언한다.</li>
+          <li><strong>자식에 쓰는 속성:</strong> 항목별 크기 배분이나 개별 정렬은 item에서 정한다.<br>각 카드에 <code>display: flex</code>를 쓰면 카드 내부에 또 다른 Flex 관계가 생긴다.</li>
+        </ul>
+        <pre><code>.fl-parent {
+  display: flex;
+  gap: .5rem;
+}
+
+&lt;div class="fl-parent"&gt;
+  &lt;div&gt;A &lt;span&gt;A 안의 내용&lt;/span&gt;&lt;/div&gt;
+  &lt;div&gt;B&lt;/div&gt;
+  &lt;div&gt;C&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        <div class="demo-surface"><div class="fl-parent fl-box"><div class="fl-tile">A<span class="fl-nested">A 안의 내용</span></div><div class="fl-tile">B</div><div class="fl-tile">C</div></div></div>
+        <p>A, B, C만 부모의 직계 자식이므로 세 항목이 한 행에 놓인다.<br>A 안의 작은 문장은 별도의 Flex item이 아니라 A의 내용으로 남는다.</p>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>2. 주축은 항상 가로가 아니다</h2></div>
+        <p><strong>주축(main axis)</strong>은 항목이 나열되는 방향이고, <strong>교차축(cross axis)</strong>은 주축과 직각인 방향이다.<br>이 예제는 일반적인 한국어 웹 문서처럼 가로쓰기와 왼쪽→오른쪽 방향을 사용한다.</p>
+        <ul class="lesson-points">
+          <li><strong><code>row</code>:</strong> 주축은 왼쪽→오른쪽, 교차축은 위→아래이다.<br>기본 방향이므로 별도로 쓰지 않아도 가로 행으로 시작한다.</li>
+          <li><strong><code>column</code>:</strong> 주축은 위→아래, 교차축은 왼쪽→오른쪽이다.<br>정렬 속성 이름은 그대로이고, 속성이 작용하는 물리적 방향이 바뀐다.</li>
+          <li><strong>방향을 판단하는 순서:</strong> 먼저 <code>flex-direction</code>을 확인한다.<br>“justify는 가로”로 외우면 column 배치를 설명할 수 없다.</li>
+        </ul>
+        <pre><code>.fl-axis {
+  display: flex;
+  gap: .5rem;
+  min-height: 200px;
+  align-items: flex-start;
+}
+.fl-row { flex-direction: row; }
+.fl-column { flex-direction: column; }</code></pre>
+        <div class="demo-surface"><div class="fl-samples">
+          <div class="fl-sample"><span class="fl-label">row · 주축 → / 교차축 ↓</span><div class="fl-axis fl-row fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div></div>
+          <div class="fl-sample"><span class="fl-label">column · 주축 ↓ / 교차축 →</span><div class="fl-axis fl-column fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div></div>
+        </div></div>
+        <p>두 상자에 같은 A, B, C가 들어 있지만 나열되는 방향만 다르다.<br><code>row-reverse</code>와 <code>column-reverse</code>는 주축의 시작과 끝을 뒤집는다. 시각 순서와 HTML 읽기 순서가 달라질 수 있으므로 순서 수정 용도로 남용하지 않는다.</p>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>3. justify-content는 주축의 남는 공간을 배분한다</h2></div>
+        <p>항목들의 크기를 정한 뒤 주축에 여유 공간이 있으면 그 공간을 어디에 둘지 결정한다.<br>아래는 너비가 일정한 세 항목을 같은 가로 행에 배치한 비교이다.</p>
+        <ul class="lesson-points">
+          <li><strong><code>flex-start / center / flex-end</code>:</strong> 항목 묶음을 주축의 시작·가운데·끝에 둔다.<br>row에서는 왼쪽·가운데·오른쪽이고, column에서는 위·가운데·아래이다.</li>
+          <li><strong><code>space-between</code>:</strong> 첫 항목과 마지막 항목을 양 끝에 두고 남는 공간을 사이에 나눈다.<br>항목이 하나뿐이면 시작에 놓이며, 고정 간격을 만드는 속성은 아니다.</li>
+          <li><strong>여유 공간이 없으면:</strong> 항목이 부모를 모두 채울 때 정렬값을 바꿔도 차이가 잘 보이지 않는다.<br>특히 모든 항목이 <code>flex: 1</code>로 공간을 이미 차지했는지 확인한다.</li>
+        </ul>
+        <pre><code>.fl-justify { display: flex; gap: .25rem; }
+.fl-justify .fl-tile { flex: 0 0 36px; }
+
+.fl-start   { justify-content: flex-start; }
+.fl-center  { justify-content: center; }
+.fl-end     { justify-content: flex-end; }
+.fl-between { justify-content: space-between; }</code></pre>
+        <div class="demo-surface">
+          <span class="fl-label">flex-start</span><div class="fl-justify fl-start fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div>
+          <span class="fl-label">center</span><div class="fl-justify fl-center fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div>
+          <span class="fl-label">flex-end</span><div class="fl-justify fl-end fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div>
+          <span class="fl-label">space-between</span><div class="fl-justify fl-between fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div>
+        </div>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>4. align-items는 교차축, align-self는 항목 하나의 정렬이다</h2></div>
+        <p>row의 교차축은 세로이므로 부모 높이를 <code>150px</code>로 확보하면 위·중간·아래의 차이가 보인다.<br>부모가 내용만큼만 높다면 가운데 정렬을 해도 이동할 여유 공간이 거의 없다.</p>
+        <ul class="lesson-points">
+          <li><strong><code>stretch</code>:</strong> 교차축 크기가 자동인 항목을 줄의 높이만큼 늘린다.<br>항목에 높이를 명시하면 그 높이까지 무시하며 늘리는 것은 아니다.</li>
+          <li><strong><code>center / flex-start / flex-end</code>:</strong> 항목을 늘리지 않고 교차축의 가운데·시작·끝에 둔다.<br>column에서는 이 세 값이 가로 방향 정렬을 제어한다.</li>
+          <li><strong><code>align-self</code>:</strong> 부모의 <code>align-items</code> 대신 해당 item 하나에만 정렬을 적용한다.<br>마지막 비교에서 B만 아래로 내려가고 A와 C는 위에 남는다.</li>
+        </ul>
+        <pre><code>.fl-align { display: flex; gap: .5rem; height: 150px; }
+.fl-align .fl-tile { flex: 1; }
+.fl-stretch      { align-items: stretch; }
+.fl-align-center { align-items: center; }
+.fl-align-start  { align-items: flex-start; }
+.fl-align-end    { align-items: flex-end; }
+.fl-self         { align-self: flex-end; } /* B에 적용 */</code></pre>
+        <div class="demo-surface"><div class="fl-samples">
+          <div class="fl-sample"><span class="fl-label">stretch · 높이 자동</span><div class="fl-align fl-stretch fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div></div>
+          <div class="fl-sample"><span class="fl-label">center</span><div class="fl-align fl-align-center fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div></div>
+          <div class="fl-sample"><span class="fl-label">flex-start</span><div class="fl-align fl-align-start fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div></div>
+          <div class="fl-sample"><span class="fl-label">flex-end</span><div class="fl-align fl-align-end fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div></div>
+          <div class="fl-sample"><span class="fl-label">부모 flex-start + B의 align-self</span><div class="fl-align fl-align-start fl-box"><span class="fl-tile">A</span><span class="fl-tile fl-self">B</span><span class="fl-tile">C</span></div></div>
+        </div></div>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>5. gap은 간격이고 space-between은 여유 공간 배분이다</h2></div>
+        <p><code>gap: 16px</code>은 이웃한 항목 사이에 16px의 간격을 둔다.<br>부모 바깥 여백이나 첫 항목 앞의 여백을 만들지는 않는다.</p>
+        <p>여기에 <code>justify-content: space-between</code>을 추가하면 고정 간격 외의 여유 공간도 항목 사이로 분배된다.<br>따라서 화면에서 측정한 실제 항목 간 거리는 16px보다 커질 수 있다.</p>
+        <pre><code>.fl-gap { display: flex; gap: 16px; }
+.fl-gap .fl-tile { flex: 0 0 36px; }
+.fl-gap-distributed { justify-content: space-between; }</code></pre>
+        <div class="demo-surface">
+          <span class="fl-label">gap: 16px · 남는 공간은 뒤에</span><div class="fl-gap fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div>
+          <p class="fl-label">gap: 16px + space-between · 남는 공간도 사이에</p><div class="fl-gap fl-gap-distributed fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div>
+        </div>
+        <p>버튼 사이 거리를 항상 일정하게 유지하려면 gap을 사용한다.<br>로고와 메뉴를 양 끝에 놓으려면 space-between처럼 여유 공간을 나누는 규칙이 적합하다.</p>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>6. flex-wrap으로 줄을 만들고 align-content로 줄 묶음을 정렬한다</h2></div>
+        <p>기본값 <code>nowrap</code>은 공간이 부족해도 새 줄을 만들지 않는다.<br><code>flex-wrap: wrap</code>을 지정하면 들어갈 수 없는 항목을 다음 줄로 보낸다.</p>
+        <ul class="lesson-points">
+          <li><strong>줄바꿈 조건:</strong> 아래 항목은 <code>flex: 0 0 100px</code>로 늘거나 줄지 않는 기준 폭을 갖는다.<br>부모 안에 세 개가 들어가지 못하므로 두 줄로 나뉜다.</li>
+          <li><strong><code>align-items</code>:</strong> 각 줄 안에서 개별 항목의 교차축 정렬을 정한다.<br><strong><code>align-content</code>:</strong> 여러 줄로 이루어진 묶음의 교차축 공간을 배분한다.</li>
+          <li><strong>차이가 보이는 조건:</strong> 여러 줄이 생기고, 교차축에 남는 공간이 있어야 한다.<br>아래는 부모 높이를 230px로 정해 줄 사이 공간을 비교한다. <code>nowrap</code> 단일 줄에는 <code>align-content</code>가 적용되지 않는다.</li>
+        </ul>
+        <pre><code>.fl-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  width: min(100%, 280px);
+  height: 230px;
+  gap: 8px;
+  align-items: flex-start;
+}
+.fl-wrap .fl-tile { flex: 0 0 100px; }
+.fl-lines-start   { align-content: flex-start; }
+.fl-lines-between { align-content: space-between; }</code></pre>
+        <div class="demo-surface"><div class="fl-samples">
+          <div class="fl-sample"><span class="fl-label">줄을 위쪽에 모으기</span><div class="fl-wrap fl-lines-start fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span><span class="fl-tile">D</span></div></div>
+          <div class="fl-sample"><span class="fl-label">첫 줄과 끝 줄 사이로 공간 배분</span><div class="fl-wrap fl-lines-between fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span><span class="fl-tile">D</span></div></div>
+        </div></div>
+      </section>
+
+      <section class="lesson-section">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>7. flex는 항목이 공간을 늘리고 줄이는 규칙이다</h2></div>
+        <p><code>flex</code>는 부모가 아니라 항목에 작성한다.<br>세 값을 순서대로 쓰면 <code>flex-grow flex-shrink flex-basis</code>이며, 남는 공간·부족한 공간·시작 크기를 각각 다룬다.</p>
+        <ul class="lesson-points">
+          <li><strong><code>flex-grow</code>:</strong> 주축의 여유 공간을 차지할 비율이다.<br>0이면 여유 공간이 있어도 그 이유만으로 늘지 않는다.</li>
+          <li><strong><code>flex-shrink</code>:</strong> 공간이 부족할 때 줄어들 수 있는 비율이다.<br>실제 축소량은 기준 크기에도 영향을 받으므로 “1이면 모두 같은 픽셀만큼 감소”는 아니다.</li>
+          <li><strong><code>flex-basis</code>:</strong> 공간을 배분하기 전에 출발점으로 삼는 주축 크기이다.<br><code>flex: 0 0 100px</code>은 늘지도 줄지도 않는 100px 기준 항목이다.</li>
+          <li><strong><code>flex: 1</code>:</strong> 브라우저에서는 보통 <code>1 1 0%</code>로 확장된다.<br>같은 기준에서 공간을 나누는 카드 배치에 편리하지만 padding·border·최소 크기가 다르면 전체 폭이 정확히 같지 않을 수 있다.</li>
+          <li><strong><code>min-width: 0</code>:</strong> 긴 내용 때문에 item이 내용의 최소 폭 아래로 줄지 못하는 제약을 풀어 준다.<br>긴 단어를 줄바꿈하려면 내용에도 <code>overflow-wrap: anywhere</code> 같은 별도 처리 규칙이 필요하다.</li>
+        </ul>
+        <pre><code>.fl-share { display: flex; gap: .5rem; }
+.fl-share .fl-tile {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.fl-share-ratio .fl-tile:first-child { flex: 2; }</code></pre>
+        <div class="demo-surface">
+          <span class="fl-label">동일한 기준 · 1 : 1 : 1</span><div class="fl-share fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div>
+          <p class="fl-label">첫 항목에 더 많은 공간 · 2 : 1 : 1</p><div class="fl-share fl-share-ratio fl-box"><span class="fl-tile">A</span><span class="fl-tile">B</span><span class="fl-tile">C</span></div>
+        </div>
+        <p>두 번째 행에서 A는 다른 항목보다 넓게 보인다.<br>비율은 공간 배분의 기준이며 padding과 border까지 포함한 바깥 폭이 언제나 정확히 2배라는 뜻은 아니다.</p>
+      </section>
+
+      <nav class="lesson-pagination" aria-label="차시 이동"><a href="07-cascade-box-type.html">이전: 박스 모델</a><a href="09-responsive-profile.html">다음: 반응형 전환</a></nav>
+    </main>
+  </body>
+</html>

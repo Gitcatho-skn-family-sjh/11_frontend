@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript 02 · 값의 종류와 변환 결과를 구분한다</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../assets/lesson.css" />
+    <link rel="stylesheet" href="../assets/day1.css" />
+    <script src="../assets/js-nav.js" defer></script>
+    <script src="02_data_types.js" defer></script>
+  </head>
+  <body class="lesson-page has-day1-sidebar" data-lesson-track="day2">
+    <a class="skip-link" href="#lesson-content">본문으로 건너뛰기</a>
+    <main id="lesson-content" class="lesson-shell">
+      <nav class="lesson-breadcrumb" aria-label="현재 위치"><span>Day 2</span><span>02</span><span>자료형과 형 변환</span></nav>
+      <header class="lesson-hero">
+        <p class="lesson-kicker">JAVASCRIPT 02</p>
+        <h1>값의 종류와 변환 결과를 구분한다</h1>
+        <p class="lesson-lead">숫자처럼 보이는 문자열, 아직 없는 값, 의도적으로 비운 값은 서로 다르다.<br />자료형을 확인하고 필요한 종류로 변환해야 계산·조건·입력 검증이 의도대로 동작한다.</p>
+        <div class="lesson-meta"><span>원시값 · 객체</span><span>typeof · NaN</span><span>Number · String · Boolean</span></div>
+      </header>
+      <section class="lesson-section" id="section-1">
+        <div class="section-heading"><p class="section-kicker">JAVASCRIPT</p><h2>자료형은 값이 어떤 종류인지 알려 준다</h2></div>
+        <p>자료형은 저장된 값을 어떻게 해석하고 사용할지 구분하는 기준이다.<br />값의 화면 모양이 비슷해도 자료형이 다르면 연산 결과가 달라질 수 있다.</p>
+        <ul class="lesson-points">
+          <li><strong>number:</strong> 정수와 소수를 모두 나타내는 숫자형이다.<br />4500, -3, 2.5는 모두 number이며, 일반적인 숫자 계산에 사용한다.</li>
+          <li><strong>string:</strong> 따옴표 또는 백틱으로 감싼 문자열이다.<br />"4500"은 숫자가 아니라 글자 네 개이므로 숫자 4500과 구분해야 한다.</li>
+          <li><strong>boolean:</strong> true와 false 두 값으로 참·거짓을 나타낸다.<br />따옴표가 있는 "false"는 불리언이 아니라 문자열이다.</li>
+          <li><strong>typeof:</strong> 값의 자료형 이름을 문자열로 반환한다.<br />변수 이름이 아니라 현재 저장된 값을 기준으로 판단하므로, 입력 처리 중 자료형을 확인하는 데 유용하다.</li>
+        </ul>
+      </section>
+      <section class="lesson-section" id="section-2">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>값과 typeof를 나란히 읽는다</h2></div>
+        <p>같은 4500을 숫자와 문자열로 나누어 저장한다.<br />두 값의 typeof 결과를 비교하고, 불리언과 소수도 함께 확인한다.</p>
+        <ul class="lesson-points">
+          <li>Console에서는 따옴표가 생략되어 숫자 4500과 문자열 "4500"이 비슷하게 보일 수 있다.<br />typeof를 함께 출력하면 number와 string을 구분할 수 있다.</li>
+          <li>일반적인 number는 소수를 이진 부동소수점으로 저장하므로 모든 소수를 정확히 표현하지는 못한다.<br />0.1 + 0.2의 출력은 작은 오차가 있을 수 있음을 보여 준다.</li>
+        </ul>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>02_data_types.js</span><span>EXAMPLE</span></div>
+          <pre><code>const amount = 4500;
+const amountText = "4500";
+const isTakeout = true;
+let numberKind = "";
+let stringKind = "";
+// ***** TODO 1. amount와 amountText의 자료형 이름을 각각 대입하기 *****
+numberKind = typeof amount;
+stringKind = typeof amountText;
+// **************************************************************
+console.log("숫자 값과 종류:", amount, numberKind);
+console.log("문자열 값과 종류:", amountText, stringKind);
+console.log("불리언 값과 종류:", isTakeout, typeof isTakeout);
+console.log("소수의 종류:", typeof 2.5);
+console.log("소수 계산:", 0.1 + 0.2);</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>정상 실행 결과</h3>
+          <pre class="terminal-output">숫자 값과 종류: 4500 number
+문자열 값과 종류: 4500 string
+불리언 값과 종류: true boolean
+소수의 종류: number
+소수 계산: 0.30000000000000004</pre>
+        </div>
+        <p>숫자와 소수는 number, 따옴표로 감싼 값은 string, true는 boolean이다.<br />소수 계산의 마지막 자릿수는 자료형이 값을 표현하는 방식에도 한계가 있음을 보여 준다.</p>
+      </section>
+      <section class="lesson-section" id="section-3">
+        <div class="section-heading"><p class="section-kicker">JAVASCRIPT</p><h2>undefined와 null은 값이 없는 이유를 구분한다</h2></div>
+        <p><code>undefined</code>는 값을 아직 대입하지 않았거나, 존재하지 않는 속성을 읽는 상황 등에서 나타난다.<br /><code>null</code>은 값이 없음을 코드에서 의도적으로 나타낼 때 사용할 수 있다.</p>
+        <ul class="lesson-points">
+          <li><code>let pendingCount;</code>처럼 선언만 하면 pendingCount의 값은 undefined이다.<br />값을 아직 받지 않은 상태와 숫자 0을 구분할 수 있다.</li>
+          <li>선택한 항목이 없다는 상태를 <code>selectedItem = null;</code>로 표현할 수 있다.<br />빈 문자열 ""이나 숫자 0을 대신 쓰면 문자열·숫자 처리 규칙과 섞일 수 있다.</li>
+          <li><code>typeof null</code>은 역사적인 이유로 "object"를 반환하는 예외이다.<br />null은 객체가 아니라 원시값이며, null 여부는 <code>value === null</code>로 직접 확인한다.</li>
+          <li>JavaScript는 동적 타입 언어이므로 let 변수에 다른 종류의 값을 다시 대입할 수 있다.<br />변수 이름의 역할까지 자주 바꾸기보다는, 입력 문자열과 변환한 숫자처럼 역할별 이름을 구분하는 편이 읽기 쉽다.</li>
+        </ul>
+      </section>
+      <section class="lesson-section" id="section-4">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>없는 값과 재대입 후 달라지는 자료형을 확인한다</h2></div>
+        <p>아직 받지 않은 수량과 선택된 항목이 없는 상태를 따로 표현한다.<br />또한 문자열을 저장한 변수에 숫자를 다시 대입했을 때 typeof가 달라지는지 확인한다.</p>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>02_data_types.js</span><span>EXAMPLE</span></div>
+          <pre><code>let pendingCount;
+let selectedItem;
+// ***** TODO 2. 선택된 항목이 없음을 selectedItem에 null로 표현하기 *****
+selectedItem = null;
+// **************************************************************
+console.log("아직 받지 않은 값:", pendingCount, typeof pendingCount);
+console.log("선택된 항목 없음:", selectedItem);
+console.log("null의 typeof 예외:", typeof selectedItem);
+console.log("정확히 null인가:", selectedItem === null);
+let dynamicValue = "3";
+console.log("변경 전 자료형:", typeof dynamicValue);
+dynamicValue = 3;
+console.log("변경 후 자료형:", typeof dynamicValue);</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>정상 실행 결과</h3>
+          <pre class="terminal-output">아직 받지 않은 값: undefined undefined
+선택된 항목 없음: null
+null의 typeof 예외: object
+정확히 null인가: true
+변경 전 자료형: string
+변경 후 자료형: number</pre>
+        </div>
+        <p>미대입 값은 undefined이고 의도적으로 비운 값은 null이다.<br />같은 dynamicValue 이름도 현재 값이 "3"이면 string, 3이면 number가 된다.</p>
+      </section>
+      <section class="lesson-section" id="section-5">
+        <div class="section-heading"><p class="section-kicker">JAVASCRIPT</p><h2>필요한 자료형으로 명시적으로 변환한다</h2></div>
+        <p><code>Number()</code>, <code>String()</code>, <code>Boolean()</code>은 JavaScript가 제공하는 함수이다.<br />괄호 안에 변환할 값을 넣어 호출하면 원하는 자료형의 결과를 얻을 수 있다.<br />자동 변환에 기대기 전에 어떤 입력이 어떤 값으로 바뀌는지 확인한다.</p>
+        <ul class="lesson-points">
+          <li><strong>Number:</strong> "3"을 숫자 3으로 바꿀 수 있다.<br />입력창의 value가 숫자처럼 보여도 문자열이므로, 숫자 계산을 하기 전에 변환 결과를 사용한다.</li>
+          <li><strong>String:</strong> 숫자나 불리언을 문자열로 바꾼다.<br />변환한 값을 표시 문장에 조합할 수 있지만, 표시한 문자열을 다시 계산할 때는 종류를 확인해야 한다.</li>
+          <li><strong>Boolean:</strong> 값이 조건에서 참처럼 취급되는지 불리언으로 변환한다.<br />빈 문자열은 false이지만 "false"는 글자가 있는 문자열이므로 true이다. 문자열의 뜻을 해석하는 기능이 아니다.</li>
+          <li><strong>공백 정리:</strong> trim은 앞뒤 공백을 제거한 새 문자열을 반환한다.<br />원본을 바꾸지 않으며 문자열 안쪽의 띄어쓰기까지 제거하지는 않는다.</li>
+        </ul>
+      </section>
+      <section class="lesson-section" id="section-6">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>문자열을 정리한 다음 숫자로 계산한다</h2></div>
+        <p>공백이 들어 있는 수량 문자열을 정리하고 숫자로 변환한다.<br />문자열 연결과 숫자 덧셈이 서로 다른 결과를 만드는지 비교한다.</p>
+        <p>백틱으로 감싼 템플릿 문자열에서는 <code>${표현식}</code> 위치에 표현식을 계산한 값이 들어간다.<br />아래의 <code>`[${rawCount}]`</code>에서 <code>[]</code>는 배열 문법이 아니라 앞뒤 공백을 관찰하기 위해 붙인 일반 문자이다.</p>
+        <ul class="lesson-points">
+          <li><code>Number("")</code>와 <code>Number("   ")</code>는 모두 0이다.<br />따라서 빈 입력과 실제 수량 0을 구분하려면 변환 전에 빈 문자열인지 검사해야 한다.</li>
+          <li>값을 변환할 수 있다는 사실과 그 값을 허용한다는 사실은 다르다.<br />양수만 가능한 수량이나 정수만 가능한 개수는 조건문으로 별도 검사한다.</li>
+        </ul>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>02_data_types.js</span><span>EXAMPLE</span></div>
+          <pre><code>const rawCount = " 3 ";
+const countText = rawCount.trim();
+let countNumber;
+// ***** TODO 3. 정리된 countText를 숫자로 변환해 countNumber에 대입하기 *****
+countNumber = Number(countText);
+// **************************************************************
+console.log("원래 문자열:", `[${rawCount}]`);
+console.log("정리한 문자열:", `[${countText}]`);
+console.log("문자열 연결:", countText + 1);
+console.log("숫자 덧셈:", countNumber + 1);
+console.log("숫자를 문자열로:", String(countNumber), typeof String(countNumber));
+console.log("빈 문자열·공백의 숫자 변환:", Number(""), Number("   "));
+console.log("빈 문자열의 불리언:", Boolean(""));
+console.log("문자열 false의 불리언:", Boolean("false"));</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>정상 실행 결과</h3>
+          <pre class="terminal-output">원래 문자열: [ 3 ]
+정리한 문자열: [3]
+문자열 연결: 31
+숫자 덧셈: 4
+숫자를 문자열로: 3 string
+빈 문자열·공백의 숫자 변환: 0 0
+빈 문자열의 불리언: false
+문자열 false의 불리언: true</pre>
+        </div>
+        <p>정리한 "3"은 연결하면 31, 숫자로 바꿔 더하면 4가 된다.<br />빈 문자열의 숫자 변환은 0이며, "false"라는 문자열의 불리언 변환은 true이다.</p>
+      </section>
+      <section class="lesson-section" id="section-7">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>NaN은 ===가 아니라 Number.isNaN으로 확인한다</h2></div>
+        <p><code>NaN</code>은 Not-a-Number의 약자로, 유효한 숫자 결과를 얻지 못했음을 나타내는 number 값이다.<br />숫자로 해석할 수 없는 문자열을 Number로 바꾸면 NaN이 된다.</p>
+        <ul class="lesson-points">
+          <li><code>NaN === NaN</code>은 false이므로 자기 자신과 비교하는 방식으로 검사할 수 없다.<br /><code>Number.isNaN(value)</code>는 전달된 값 자체가 NaN인지 확인한다.</li>
+          <li>전역 <code>isNaN(value)</code>은 먼저 숫자 변환을 시도한 뒤 NaN 여부를 검사한다.<br />Number.isNaN과 달리 문자열 "세 잔"도 true가 될 수 있으므로, 두 함수의 검사 대상이 다르다.</li>
+          <li><code>Number.isFinite()</code>는 NaN과 Infinity가 아닌 유한한 숫자인지 확인한다.<br />0·음수·소수도 유한할 수 있으므로 이 검사만으로 올바른 주문 수량인지 판단할 수는 없다.</li>
+        </ul>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>02_data_types.js</span><span>EXAMPLE</span></div>
+          <pre><code>const badInput = "세 잔";
+const convertedBad = Number(badInput);
+let conversionFailed;
+// ***** TODO 4. 변환한 값 자체가 NaN인지 검사해 conversionFailed에 대입하기 *****
+conversionFailed = Number.isNaN(convertedBad);
+// **************************************************************
+console.log("변환 결과와 자료형:", convertedBad, typeof convertedBad);
+console.log("숫자 변환 실패:", conversionFailed);
+console.log("NaN의 동등 비교:", NaN === NaN);
+console.log("문자열 자체가 NaN인가:", Number.isNaN(badInput));
+console.log("문자열을 숫자로 바꾸면 NaN인가:", isNaN(badInput));
+console.log("유한한 숫자인가:", Number.isFinite(convertedBad));</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>정상 실행 결과</h3>
+          <pre class="terminal-output">변환 결과와 자료형: NaN number
+숫자 변환 실패: true
+NaN의 동등 비교: false
+문자열 자체가 NaN인가: false
+문자열을 숫자로 바꾸면 NaN인가: true
+유한한 숫자인가: false</pre>
+        </div>
+        <p>convertedBad는 NaN이지만 typeof는 number이다.<br />Number.isNaN은 변환된 NaN에 true, 원래 문자열에 false를 반환한다. 전역 isNaN은 원래 문자열을 숫자로 바꾸기 때문에 true를 반환한다.</p>
+      </section>
+      <section class="lesson-section" id="section-8">
+        <div class="section-heading"><p class="section-kicker">JAVASCRIPT</p><h2>원시값 복사와 객체 공유는 다르게 동작한다</h2></div>
+        <p>숫자·문자열·불리언·null·undefined 등은 원시값이다.<br />객체는 속성 이름으로 여러 값을 묶으며, 다른 변수에 대입하면 같은 객체를 가리킬 수 있다.</p>
+        <ul class="lesson-points">
+          <li><strong>원시값:</strong> 숫자를 다른 변수에 대입한 뒤 한쪽을 바꾸어도 다른 쪽의 숫자는 바뀌지 않는다.<br />문자열도 원본을 직접 고치는 대신 새 문자열을 만들어 대입한다.</li>
+          <li><strong>객체:</strong> <code>{ name: "민지" }</code>는 name 속성을 가진 객체이며 <code>profile.name</code>으로 값을 읽는다.<br />구체적인 객체 문법은 다음 객체·배열 단원에서 다루고, 여기서는 공유될 수 있다는 차이만 확인한다.</li>
+          <li>객체를 다른 변수에 대입했다고 새 객체가 복제된 것은 아니다.<br />두 이름이 같은 객체를 가리키면 어느 쪽으로 속성을 바꾸어도 다른 쪽에서 바뀐 상태를 읽는다.</li>
+        </ul>
+      </section>
+      <section class="lesson-section" id="section-9">
+        <div class="section-heading"><p class="section-kicker">EXAMPLE</p><h2>숫자는 독립적으로 바뀌고 객체의 속성은 공유된다</h2></div>
+        <p>숫자 두 변수와 같은 객체를 가리키는 두 변수를 나란히 비교한다.<br />대입 이후 한쪽을 바꿨을 때 다른 쪽에서 무엇을 읽는지 확인한다.</p>
+        <div class="code-panel">
+          <div class="code-panel-header"><span>02_data_types.js</span><span>EXAMPLE</span></div>
+          <pre><code>let originalCount = 2;
+let copiedCount = originalCount;
+copiedCount = 3;
+console.log("원시값 원본과 변경값:", originalCount, copiedCount);
+
+const profile = { name: "민지" };
+const sharedProfile = profile;
+// ***** TODO 5. sharedProfile의 name 속성을 서연으로 변경하기 *****
+sharedProfile.name = "서연";
+// **************************************************************
+console.log("원본 이름으로 읽은 속성:", profile.name);
+console.log("다른 이름으로 읽은 속성:", sharedProfile.name);
+console.log("같은 객체인가:", profile === sharedProfile);</code></pre>
+        </div>
+        <div class="demo-surface">
+          <h3>정상 실행 결과</h3>
+          <pre class="terminal-output">원시값 원본과 변경값: 2 3
+원본 이름으로 읽은 속성: 서연
+다른 이름으로 읽은 속성: 서연
+같은 객체인가: true</pre>
+        </div>
+        <p>숫자는 원본 2와 변경값 3이 따로 남는다.<br />profile과 sharedProfile은 같은 객체를 가리키므로 둘 다 변경된 이름 서연을 읽는다.</p>
+      </section>
+      <section class="lesson-section" id="section-10">
+        <div class="section-heading"><p class="section-kicker">JAVASCRIPT</p><h2>BigInt와 Symbol도 원시 자료형이다</h2></div>
+        <p>JavaScript의 원시 자료형에는 number·string·boolean·undefined·null 외에 bigint와 symbol도 있다.<br />이름과 목적을 구분해 두되, 지금의 화면 처리 예제에서는 사용하지 않는다.</p>
+        <ul class="lesson-points">
+          <li><strong>BigInt:</strong> 정밀도를 잃지 않는 큰 정수 계산을 위한 자료형이다.<br /><code>123n</code>처럼 n을 붙인 정수 리터럴로 표현할 수 있으며, 일반적인 number와 무조건 섞어 계산하는 자료형은 아니다.</li>
+          <li><strong>Symbol:</strong> 서로 구별되는 고유한 값을 만드는 자료형이다.<br />객체 속성의 고유 키 등에 사용하지만, 일반적인 이름·수량·입력 상태를 저장하는 데 먼저 필요한 문법은 아니다.</li>
+        </ul>
+      </section>
+      <nav class="lesson-pagination" aria-label="차시 이동">
+        <a href="01_variables_console.html">이전: 변수와 Console</a>
+        <a href="03_operators_conditions.html">다음: 연산자와 조건문</a>
+      </nav>
+    </main>
+  </body>
+</html>
